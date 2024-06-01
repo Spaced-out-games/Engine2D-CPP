@@ -234,24 +234,31 @@ Error:
 }
 
 */
+#pragma once
+#define SDL_MAIN_HANDLED
+
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include "Engine.h"
-#include <iostream>
-
+#include "prop.h"
+//static Engine& game;
 int main()
 {
     // Initialize the engine
-    Engine::init_engine("test", 480, 480);
-
+    //Engine::init_engine("test", 480, 480);
+    // 
     // Get the game instance
-    static Engine& game = Engine::getGame();
+    static Engine& game = Engine::getInstance();
+    Prop p;
+    game.add_prop(0, &p);
+    game.setPropPosition(0, { 96,23 });
+    std::cout << p.getPosition().x;
     // Check if the game instance is valid
     if (&game != nullptr)
     {
         std::cout << "Game initialized successfully." << std::endl;
 
-        // Run the game loop (assuming Engine::mainLoop handles the game loop)
+         //Run the game loop (assuming Engine::mainLoop handles the game loop)
         
         game.mainLoop();
     }
