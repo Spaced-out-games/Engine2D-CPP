@@ -1,8 +1,9 @@
 #ifndef VEC2_H
 #define VEC2_H
 
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
+#pragma once
+//#include "cuda_runtime.h"
+//#include "device_launch_parameters.h"
 
 class vec2
 {
