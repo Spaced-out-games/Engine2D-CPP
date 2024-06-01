@@ -1,23 +1,30 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#pragma once
 #include <SDL.h>
 #include <iostream>
-#include <vector>
-#include "prop.h"
+
 #include "vec2.h"
 
-#define byte char
 
+// This was causing issues with causing 
+//#include "prop.h"
+
+
+#define byte char
+#define PROP_ATTRIBUTE_COUNT 9
 #define MAX_PROPS 512
 
 //#define ENGINE Engine::getGame()
 //#define CANVAS Engine::getGame().getCanvas()
 
+class Prop;
+
 class Engine
 {
 public:
-	static Engine* game;
+	
 
 	// Quits the game
 	void quit();
@@ -30,14 +37,14 @@ public:
 	// Handles IO
 	void handleIO();
 	// Creates a singleton instance of the engine
-	static void init_engine(const char* title, int width, int height);
 
 	// Gets a singleton instance of the engine
-	static Engine& getGame();
+	static Engine& getInstance();
 	// Finds an unused slot for a new prop
 	int find_slot();
 	// Removes a prop by setting prop.flags[PROP_VALID] to zero
 	void remove_prop(int idx);
+	void add_prop(int idx, Prop* new_prop);
 
 	// Gets a prop's position in screen space
 	vec2 getPropPosition(int index);
@@ -70,8 +77,12 @@ public:
 	// Sets a prop's rotational velocity (radians / second^2)
 	void setPropRotationalAcceleration(int index, float new_rotational_velocity);
 
+	bool propIsValid(int index);
+
 	// Gets the size of the game's window
 	vec2 getWindowSize();
+
+	void setWindowSize(vec2 new_window_size);
 
 	SDL_Surface& getCanvas();
 
@@ -82,7 +93,6 @@ public:
 
 	
 private:
-	
 	// Window / event handling
 	
 	Engine(const char* title, int width, int height);
@@ -100,7 +110,6 @@ private:
 	// Prop / component information
 
 	Prop* props[MAX_PROPS] = {nullptr};
-
 
 	/*
 	For the sake of performance and ease of use, all transformation information will be stored here contiguously as a 2D array of floats:
@@ -129,32 +138,15 @@ private:
 	float* rotational_velocity =		attributes + 7 * MAX_PROPS;
 	float* rotational_acceleration =	attributes + 8 * MAX_PROPS;
 	
-	
-	
-
-	
-
 };
-
-Engine* Engine::game = nullptr;
-//#define ENGINE Engine::getGame()
-//#define CANVAS Engine::getGame().getCanvas()
 
 Engine::Engine(const char* title, int width, int height)
 {
-	/*test*/
-
-
-
-
-
-
-
-
 
 	// Initialize window	
 	window_width = width;
 	window_height = height;
+	
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		std::cout << "Initialization failed: SDL_Error: " << SDL_GetError() << "\n";
@@ -168,7 +160,17 @@ Engine::Engine(const char* title, int width, int height)
 		}
 		else
 		{
+			SDL_SetWindowResizable(window, SDL_TRUE);
 			canvas = SDL_GetWindowSurface(window);
+
+			if (canvas == nullptr)
+			{
+				std::cout << "Window failed to return a window surface";
+			}
+			else
+			{
+
+			}
 		}
 	}
 }
@@ -180,15 +182,9 @@ Engine::~Engine() {
 	SDL_Quit();
 }
 
-void Engine::quit()
-{
-	running = false;
-}
+void Engine::quit() { running = false; }
 
-bool Engine::isRunning()
-{
-	return running;
-}
+bool Engine::isRunning() { return running; }
 void Engine::run()
 {
 	SDL_FillRect(canvas, NULL, SDL_MapRGB(canvas->format, 0xFF, 0xFF, 0xFF));
@@ -215,25 +211,15 @@ int Engine::mainLoop()
 	return 0;
 }
 
-void Engine::init_engine(const char* title, int width, int height)
-{
-	if (game == nullptr)
-	{
-		// Initialize the game instance
-		game = new Engine(title, width, height);
-	}
-}
 
-Engine& Engine::getGame()
-{
-	return *game;
-}
+
+Engine& Engine::getInstance() { static Engine instance = Engine("test", 1920, 1080); return instance; }
 
 int Engine::find_slot()
 {
 	for (int i = 0; i < MAX_PROPS; i++)
 	{
-		if (props[i] == nullptr)
+		if (propIsValid(i))
 		{
 			return i;
 		}
@@ -242,9 +228,12 @@ int Engine::find_slot()
 }
 
 void Engine::remove_prop(int idx)
+{ props[idx] = nullptr; }
+
+
+void Engine::add_prop(int idx, Prop* new_prop)
 {
-	props[idx]->~Prop();
-	props[idx] = nullptr;
+	props[idx] = new_prop;
 }
 
 vec2 Engine::getPropPosition(int index)
@@ -323,6 +312,17 @@ SDL_Surface& Engine::getCanvas()
 Prop* Engine::getProp(int index)
 {
 	return props[index];
+}
+bool Engine::propIsValid(int index)
+{
+	return props[index] != nullptr;
+}
+
+void Engine::setWindowSize(vec2 new_window_size)
+{
+	window_width = new_window_size.x;
+	window_height = new_window_size.y;
+	//SDL_
 }
 
 #endif

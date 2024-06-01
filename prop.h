@@ -1,11 +1,17 @@
 #ifndef PROP_H
 #define PROP_H
+
+#pragma once
 #include "vec2.h"
-#ifndef ENGINE_H
 #include "Engine.h"
-#endif
+
+// Throws 'name followed by "::" must be a class or namespace name' within kernel.cu when uncommented
+//#include "kernel.cu"
 
 #define PROP_ATTRIBUTE_COUNT 9
+
+
+class Engine;
 
 class Prop
 {
@@ -18,8 +24,7 @@ public:
 	Prop();
 	~Prop();
 	void setPropIndex(int idx);
-	bool isValid();
-	void setValid(bool state);
+
 
 	void draw();
 
@@ -48,31 +53,32 @@ public:
 
 
 	// Gets a prop's rotation (in radians)
-	//float getRotation();
+	float getRotation();
 
 	// Sets a prop's rotation (in radians)
-	//void setRotation(float new_rotation);
+	void setRotation(float new_rotation);
 
 
 
 	// Gets a prop's rotational velocity (radians / second)
-	//float getRotationalVelocity();
+	float getRotationalVelocity();
 
 	// Sets a prop's rotational velocity (radians / second)
-	//void setRotationalVelocity(float new_rotational_velocity);
+	void setRotationalVelocity(float new_rotational_velocity);
 
 
 
 	// Gets a prop's rotational velocity (radians / second^2)
-	//float getRotationalAcceleration();
+	float getRotationalAcceleration();
 
 	// Sets a prop's rotational velocity (radians / second^2)
-	//void setRotationalAcceleration(float new_rotational_velocity);
+	void setRotationalAcceleration(float new_rotational_velocity);
 
 
 private:
 	int prop_ID = 0;
 	short flags;
+
 };
 
 Prop::Prop(int prop_idx)
@@ -81,16 +87,10 @@ Prop::Prop(int prop_idx)
 	prop_ID = prop_idx;
 }
 
-Prop::Prop()
-{
-	flags = PROP_DEBUG;
-}
+Prop::Prop() { flags = PROP_DEBUG; }
 
 Prop::~Prop() = default;
-void Prop::setPropIndex(int idx)
-{
-	prop_ID = idx;
-}
+void Prop::setPropIndex(int idx) { prop_ID = idx; }
 
 
 void Prop::draw()
@@ -98,16 +98,38 @@ void Prop::draw()
 	//SDL_RenderDrawRect()
 }
 
-vec2 Prop::getPosition() {
-	return {};
-}
+vec2 Prop::getPosition() { return Engine::getInstance().getPropPosition(prop_ID); }
 
-//void Prop::setPosition(vec2 new_position) { (Engine::game)->setPropPosition(prop_ID, new_position); }// { ENGINE.setPropPosition(prop_ID, new_position); }
+void Prop::setPosition(vec2 new_position) { return Engine::getInstance().setPropPosition(prop_ID,new_position); }
 
-//vec2 Prop::getVelocity() {};// { return ENGINE.getPropVelocity(prop_ID); }
-//void Prop::setVelocity(vec2 new_velocity) {};// { ENGINE.setPropVelocity(prop_ID, new_velocity); }
 
-//vec2 Prop::getAcceleration() {};// { return ENGINE.getPropAcceleration(prop_ID); }
-//void Prop::setAcceleration(vec2 new_acceleration) {};// { ENGINE.setPropAcceleration(prop_ID, new_acceleration); }
+vec2 Prop::getVelocity() { return Engine::getInstance().getPropVelocity(prop_ID); }
+
+void Prop::setVelocity(vec2 new_velocity) { Engine::getInstance().setPropVelocity(prop_ID, new_velocity); }
+
+
+
+
+vec2 Prop::getAcceleration() { return Engine::getInstance().getPropAcceleration(prop_ID); }
+
+
+void Prop::setAcceleration(vec2 new_velocity) { Engine::getInstance().setPropAcceleration(prop_ID, new_velocity); }
+
+
+float Prop::getRotation() { return Engine::getInstance().getPropRotation(prop_ID); }
+
+
+void Prop::setRotation(float new_rotation) { Engine::getInstance().setPropRotation(prop_ID, new_rotation); }
+
+
+float Prop::getRotationalVelocity() { return Engine::getInstance().getPropRotationalVelocity(prop_ID); }
+
+
+void Prop::setRotationalVelocity(float new_rotational_velocity) { Engine::getInstance().setPropRotationalVelocity(prop_ID, new_rotational_velocity); }
+
+float Prop::getRotationalAcceleration() { return Engine::getInstance().getPropRotationalAcceleration(prop_ID); }
+
+
+void Prop::setRotationalAcceleration(float new_rotational_velocity) { Engine::getInstance().setPropRotationalAcceleration(prop_ID, new_rotational_velocity); }
 
 #endif // PROP_H
