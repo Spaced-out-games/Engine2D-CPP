@@ -237,28 +237,34 @@ Error:
 #pragma once
 #define SDL_MAIN_HANDLED
 
+
+
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 #include "Engine.h"
-#include "prop.h"
-//static Engine& game;
+
+//#include "Drawable.h"
+
 int main()
 {
-    // Initialize the engine
-    //Engine::init_engine("test", 480, 480);
-    // 
+
     // Get the game instance
     static Engine& game = Engine::getInstance();
-    Prop p;
-    game.add_prop(0, &p);
-    game.setPropPosition(0, { 96,23 });
-    std::cout << p.getPosition().x;
+
+    // Add a prop to the engine
+    //Prop p;
+    //game.add_prop(0, &p);
+
+    // Set its position
+    //game.setPropPosition(0, { 96,23 });
+
+
     // Check if the game instance is valid
     if (&game != nullptr)
     {
         std::cout << "Game initialized successfully." << std::endl;
 
-         //Run the game loop (assuming Engine::mainLoop handles the game loop)
+         //Run the game loop
         
         game.mainLoop();
     }
@@ -266,6 +272,94 @@ int main()
     {
         std::cout << "Failed to initialize game." << std::endl;
     }
+    
 
     return 0;
 }
+
+
+
+
+/*
+#include <GL/glew.h>
+#include <SDL.h>
+#include <iostream>
+
+bool initSDL(SDL_Window*& window, SDL_GLContext& context, int width, int height) {
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
+        return false;
+    }
+
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+    window = SDL_CreateWindow("OpenGL Test", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+    if (!window) {
+        std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+        return false;
+    }
+
+    context = SDL_GL_CreateContext(window);
+    if (!context) {
+        std::cerr << "OpenGL context could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+        SDL_DestroyWindow(window);
+        return false;
+    }
+
+    if (SDL_GL_SetSwapInterval(1) < 0) {
+        std::cerr << "Warning: Unable to set VSync! SDL_Error: " << SDL_GetError() << std::endl;
+    }
+
+    // Initialize GLEW
+    glewExperimental = GL_TRUE;
+    GLenum glewError = glewInit();
+    if (glewError != GLEW_OK) {
+        std::cerr << "Error initializing GLEW! " << glewGetErrorString(glewError) << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+void closeSDL(SDL_Window* window, SDL_GLContext context) {
+    SDL_GL_DeleteContext(context);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+}
+
+int main(int argc, char* args[]) {
+    SDL_Window* window = nullptr;
+    SDL_GLContext context;
+
+    const int width = 800;
+    const int height = 600;
+
+    if (!initSDL(window, context, width, height)) {
+        return -1;
+    }
+
+    bool quit = false;
+    SDL_Event e;
+
+    while (!quit) {
+        while (SDL_PollEvent(&e) != 0) {
+            if (e.type == SDL_QUIT) {
+                quit = true;
+            }
+        }
+
+        // Clear the screen with a specific color
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // black
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Swap the window buffers to display the clear color
+        SDL_GL_SwapWindow(window);
+    }
+
+    closeSDL(window, context);
+
+    return 0;
+}
+*/

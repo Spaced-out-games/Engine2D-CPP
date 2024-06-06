@@ -16,8 +16,8 @@ class Engine;
 class Prop
 {
 public:
-
-
+	
+	
 	static constexpr short PROP_DEBUG = 1;
 	
 	Prop(int prop_idx);
