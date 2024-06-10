@@ -239,24 +239,25 @@ Error:
 
 
 
-#include "cuda_runtime.h"
-#include "device_launch_parameters.h"
+//#include "cuda_runtime.h"
+//#include "device_launch_parameters.h"
 #include "Engine.h"
+#include "shader.h"
 
 //#include "Drawable.h"
 
 int main()
 {
 
+
     // Get the game instance
     static Engine& game = Engine::getInstance();
 
-    // Add a prop to the engine
-    //Prop p;
-    //game.add_prop(0, &p);
-
-    // Set its position
-    //game.setPropPosition(0, { 96,23 });
+    Geometry triangle = { 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f };
+    Component component (&triangle);
+    Prop p;
+    p.addComponent(&component);
+    game.addProp(&p);
 
 
     // Check if the game instance is valid
