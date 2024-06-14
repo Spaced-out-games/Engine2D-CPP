@@ -3,15 +3,31 @@
 #define GEOMETRY_H
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+// Contains an array of vertices. Simply initialize and call draw()
 class Geometry {
 public:
+    // Create a Geometry from an array of XYZ formatted floats
     Geometry(const std::vector<float>& vertices);
+
+    // Create a Geometry from an initializer list of XYZ formatted floats
     Geometry(std::initializer_list<GLfloat> vertex_data);
+    
+    // destructor
     ~Geometry();
+
+    // Uploads geometry to the GPU
     void upload();
+
+    // Gets the handle to the uploaded geometry in device VRAM
     GLuint getVao() const { return vao; }
+
+    // gets Vertex count
     size_t getVertexCount() const { return vertices.size() / 3; } // Assuming 3D vertices
+    
+    // draws the geometry
     void draw() const;
+
+    // Sets this geometry as the active VAO
     void bind() const;
 private:
     GLuint vao;
@@ -52,7 +68,7 @@ void Geometry::upload() {
 }
 
 void Geometry::draw() const {
-    std::cout << "drawn";
+    //std::cout << "drawn";
     bind(); // Bind the VAO before drawing
     glDrawArrays(GL_TRIANGLES, 0, vertices.size()); // Draw the geometry
 }
