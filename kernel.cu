@@ -251,13 +251,13 @@ int main()
 
 
     // Get the game instance
-    static Engine& game = Engine::getInstance();
+    static Engine* game = Engine::getInstance();
 
     Geometry triangle = { 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f };
     Component component (&triangle);
     Prop p;
     p.addComponent(&component);
-    game.addProp(&p);
+    game->addProp(&p);
 
 
     // Check if the game instance is valid
@@ -267,7 +267,7 @@ int main()
 
          //Run the game loop
         
-        game.mainLoop();
+        game->mainLoop();
     }
     else
     {
