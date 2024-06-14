@@ -18,6 +18,14 @@ class Shader
 		void use() const;
 
 		GLuint getProgram() const { return program; }
+
+      //  void setUniform(const std::string& name, int value);
+        
+      //  void setUniform(const std::string& name, float value);
+
+       // void setUniform(const std::string& name, const glm::vec3& value);
+
+       // void setUniform(const std::string& name, const glm::mat4& value);
 	private:
 		GLuint program;
 
@@ -83,5 +91,22 @@ void Shader::link(GLuint vertexShader, GLuint fragmentShader) {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 }
+/*
+void Shader::setUniform(const std::string& name, int value) {
+    
+    glUniform1i(getUniformLocation(name), value);
+}
 
+void Shader::setUniform(const std::string& name, float value) {
+    glUniform1f(getUniformLocation(name), value);
+}
+
+void Shader::setUniform(const std::string& name, const glm::vec3& value) {
+    glUniform3fv(getUniformLocation(name), 1, &value[0]);
+}
+
+void Shader::setUniform(const std::string& name, const glm::mat4& value) {
+    glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &value[0][0]);
+}
+*/
 #endif
