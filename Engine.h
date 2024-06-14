@@ -10,7 +10,7 @@
 
 
 // This was causing issues
-#include "prop.h"
+//#include "prop.h"
 
 
 #define byte char
@@ -20,8 +20,7 @@
 //#define ENGINE Engine::getGame()
 //#define CANVAS Engine::getGame().getCanvas()
 
-//class Prop;
-
+class Prop;
 class Engine
 {
 public:
@@ -43,7 +42,7 @@ public:
 	void handleIO();
 
 	// Gets a singleton instance of the engine
-	static Engine& getInstance();
+	static Engine* getInstance();
 
 	// Get a reference to the OpenGL context
 	SDL_GLContext& getContext();
@@ -73,19 +72,23 @@ private:
 	SDL_Event events;
 	int window_width;
 	int window_height;
-	double delta_time;
+	double delta_time; // not implemented
 	bool init_success;
 	bool vsync_success;
 	bool running = true;
 	// Prop / component information
 
 	Prop* props[MAX_PROPS] = {};
+	//transformInfo transform_info[MAX_PROPS];
 	int partition_index = 0; // Point to the last index
 	//float attributes[MAX_PROPS * PROP_ATTRIBUTE_COUNT];
-	
 
 	
 };
+
+#include "prop.h"
+
+
 
 Engine::Engine(const char* title, int width, int height)
 {
@@ -208,7 +211,7 @@ void Engine::on_init()
 	// This is where you would spawn Props
 }
 
-Engine& Engine::getInstance() { static Engine instance = Engine("test", 1920, 1080); return instance; }
+Engine* Engine::getInstance() { static Engine instance = Engine("test", 1920, 1080); return &instance; }
 
 
 SDL_GLContext& Engine::getContext()

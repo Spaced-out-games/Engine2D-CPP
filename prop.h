@@ -11,6 +11,7 @@
 #include <vector>
 #include "Geometry.h"
 #include "Component.h"
+#include "transformInfo.h"
 
 // Throws 'name followed by "::" must be a class or namespace name' within kernel.cu when uncommented
 //#include "kernel.cu"
@@ -26,10 +27,7 @@ public:
 	Prop();
 	~Prop();
 	void draw();
-	void setPosition(const glm::vec3& position);
-	glm::vec3 getPosition() const;
-	void setRotation(const glm::quat& rotation);
-	glm::quat getRotation() const;
+
 	void onTick();
 
 	void setID(int ID);
@@ -46,26 +44,10 @@ public:
 private:
 	std::vector<Component*> components;
 	int prop_ID;
-	glm::mat4 transform;
-	glm::vec3 velocity;
-	glm::vec3 acceleration;
-
-	glm::vec3 rotational_velocity;
-	glm::vec3 rotational_acceleration;
+	transformInfo transform_info;
 	int partition_index = 0;
 };
 Prop::Prop():
-
-	// Identity matrix. Sets position and rotation to 0, but scale to 1.0 along all axes
-	transform(1.0f),
-	// No velocity
-	velocity(0.0f),
-	// No acceleration
-	acceleration(0.0f),
-	// No rotational velocity
-	rotational_velocity(0.0f),
-	// No rotational acceleration
-	rotational_acceleration(0.0f),
 
 	prop_ID(0) // Replace with Engine::find_slot
 
@@ -73,47 +55,13 @@ Prop::Prop():
 
 Prop::Prop(int idx) :
 
-	// Identity matrix. Sets position and rotation to 0, but scale to 1.0 along all axes
-	transform(1.0f),
-	// No velocity
-	velocity(0.0f),
-	// No acceleration
-	acceleration(0.0f),
-	// No rotational velocity
-	rotational_velocity(0.0f),
-	// No rotational acceleration
-	rotational_acceleration(0.0f),
 	// Also set the prop_ID
 	prop_ID(idx)
-	// Set the geometry to the appropriate index
 
 {};
 
 Prop::~Prop() = default;
 
-
-void Prop::setPosition(const glm::vec3& position) {
-	transform[3] = glm::vec4(position, 1.0f);
-}
-
-glm::vec3 Prop::getPosition() const
-{
-	return glm::vec3(transform[3]);
-}
-
-void Prop::setRotation(const glm::quat& rotation) {
-	// Convert the quaternion to a rotation matrix
-	//glm::mat3 rotationMatrix = glm::toMat3(rotation);
-	glm::mat3 rotationMatrix = glm::mat3_cast(rotation);
-	// Copy the rotation matrix into the upper-left 3x3 part of the transformation matrix
-	memcpy(&transform[0][0], &rotationMatrix[0][0], sizeof(float) * 3); // Copy first column (X-axis)
-	memcpy(&transform[1][0], &rotationMatrix[1][0], sizeof(float) * 3); // Copy second column (Y-axis)
-	memcpy(&transform[2][0], &rotationMatrix[2][0], sizeof(float) * 3); // Copy third column (Z-axis)
-}
-
-glm::quat Prop::getRotation() const {
-	return glm::quat_cast(glm::mat3(transform));
-}
 void Prop::onTick()
 {
 	for (size_t i = 0; i < components.size(); i++)
