@@ -94,6 +94,7 @@
     <ClInclude Include="prop.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="shaderLibrary.h" />
+    <ClInclude Include="transformInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="frag.glsl" />
