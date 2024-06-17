@@ -7,6 +7,7 @@
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include "transformInfo.h"
 
 
 // This was causing issues
@@ -18,13 +19,12 @@
 #define MAX_PROPS 512
 
 //#define ENGINE Engine::getGame()
-//#define CANVAS Engine::getGame().getCanvas()
-
+//#define CANVAS Engine::getGame().getCanvas
 class Prop;
 class Engine
 {
 public:
-	
+
 
 	// Quits the game
 	void quit();
@@ -48,7 +48,7 @@ public:
 	SDL_GLContext& getContext();
 
 	// Would be interesting if I made this into a function pointer that external programs can overwrite, that way users of the library can create their own function calls remotely
-	void on_init(); 
+	void on_init();
 
 
 	bool addProp(Prop* new_prop);
@@ -56,6 +56,8 @@ public:
 	void removeProp(Prop* old_prop);
 
 	bool isValidProp(Prop* prop);
+
+	int getNextSlot() { return partition_index; };
 
 	
 	
@@ -81,14 +83,28 @@ private:
 	Prop* props[MAX_PROPS] = {};
 	//transformInfo transform_info[MAX_PROPS];
 	int partition_index = 0; // Point to the last index
-	//float attributes[MAX_PROPS * PROP_ATTRIBUTE_COUNT];
 
+	// The point of storing the transforms here is so that they have cache locality. Since I want movement to be handled on the GPU, these need to be close to each other anyway
+	transformInfo tranforms[MAX_PROPS] = {};
+
+	// Super funny smart good way of handling props:
+	// Continue using the array insertion index technique
+	// Have each Prop, in it's constructor, set it's ID to the position of the next available slot (and add itself to Engine's roster)
+	// This allows for validation of every prop in O(1) time, insertion in O(1) time, deletion in O(1) time, and keeps the pointers contiguous for fast lookup
+
+	//On a technical level, each Prop in the engine will store it's own index, so that other Props that reference them can just lookup the Prop* in the Prop* [] in O(1) to validate that Prop. Also check for nullptr.
+
+	//	Deletions and insertions will be handled in O(1) as follows :
 	
-};
+	//If deleting a Prop at index i, call the destructor at props[i], move the last Prop to props[i], update its prop_index to i, then decrement the insertion index
+
+	//If inserting, insert the new Prop at the insertion indexand increment the insertion index(of course checking the buffer has the room)
+
+	//This will form an array of pointers that are contiguous in memory.Simply iterate from 0 through insertion_index when drawing / ticking physics, etc(or even better, do it all in parrallel
+
+	//For bonus points, Prop's constructor will automatically register itself in Engine, so you can't possibly have a valid yet detached Prop.
 
 #include "prop.h"
-
-
 
 Engine::Engine(const char* title, int width, int height)
 {
@@ -255,7 +271,7 @@ void Engine::removeProp(Prop* removed_prop)
 
 bool Engine::isValidProp(Prop* prop)
 {
-	// This can probably be optimized further
+	// This can probably be optimized further with branchless techniques
 	if (prop)
 	{
 		if (props[prop->getID()] == prop)
