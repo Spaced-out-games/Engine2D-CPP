@@ -5,7 +5,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
-
 #include <glm/gtx/quaternion.hpp>
 #include "Engine.h"
 #include <vector>
@@ -43,13 +42,13 @@ public:
 
 private:
 	std::vector<Component*> components;
-	int prop_ID;
-	transformInfo transform_info;
+	
 	int partition_index = 0;
 };
 Prop::Prop():
 
-	prop_ID(0) // Replace with Engine::find_slot
+	// Automatically populate the prop_ID when it's created
+	prop_ID(Engine::getNextSlot())
 
 {}
 
@@ -64,6 +63,7 @@ Prop::~Prop() = default;
 
 void Prop::onTick()
 {
+	
 	for (size_t i = 0; i < components.size(); i++)
 	{
 		components[i]->onTick();
