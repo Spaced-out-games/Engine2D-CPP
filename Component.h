@@ -1,23 +1,20 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
-#include <glm/glm.hpp>
-#include <glm/gtc/quaternion.hpp>
 
-#include <glm/gtx/quaternion.hpp>
 #include "Geometry.h"
 #include "transformInfo.h"
 /*
-Basic game component. Attach to Props or extend this class to use. 
+Basic game component. Attach to Props or extend this class to use.
 */
 class Component
 {
 public:
-	
+
 	Component(Geometry* initialGeometry);
 	~Component();
 	void setPosition(const glm::vec3& position);
 	glm::vec3 getPosition() const;
-	void setRotation(const glm::quat & rotation);
+	void setRotation(const glm::quat& rotation);
 	glm::quat getRotation() const;
 	void draw();
 	void onTick();
@@ -30,6 +27,7 @@ Component::Component(Geometry* initialGeometry) :
 	geometry(initialGeometry)
 {};
 Component::~Component() = default;
+
 void Component::setPosition(const glm::vec3& position) {
 	// Direct write without overhead of transformInfo.setPosition. Use inline for further optimization
 	transform_info.transform[3] = glm::vec4(position, 1.0f);
@@ -38,7 +36,7 @@ void Component::setPosition(const glm::vec3& position) {
 glm::vec3 Component::getPosition() const
 {
 	// Direct read
-	return glm::vec3(tranform_info.transform[3]);
+	return glm::vec3(transform_info.transform[3]);
 }
 
 void Component::setRotation(const glm::quat& rotation) {
@@ -58,6 +56,9 @@ void Component::draw()
 	//std::cout << "drawn";
 	if (geometry) { geometry->draw(); }
 }
+void Component::onTick()
+{
 
+}
 
 #endif
