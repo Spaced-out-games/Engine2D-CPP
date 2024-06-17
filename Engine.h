@@ -59,10 +59,10 @@ public:
 
 	int getNextSlot() { return partition_index; };
 
-	
-	
 
-	
+
+
+
 private:
 	// Window / event handling
 	//ShaderHandler shaders;
@@ -85,7 +85,7 @@ private:
 	int partition_index = 0; // Point to the last index
 
 	// The point of storing the transforms here is so that they have cache locality. Since I want movement to be handled on the GPU, these need to be close to each other anyway
-	transformInfo tranforms[MAX_PROPS] = {};
+	transformInfo transforms[MAX_PROPS] = {};
 
 	// Super funny smart good way of handling props:
 	// Continue using the array insertion index technique
@@ -95,7 +95,7 @@ private:
 	//On a technical level, each Prop in the engine will store it's own index, so that other Props that reference them can just lookup the Prop* in the Prop* [] in O(1) to validate that Prop. Also check for nullptr.
 
 	//	Deletions and insertions will be handled in O(1) as follows :
-	
+
 	//If deleting a Prop at index i, call the destructor at props[i], move the last Prop to props[i], update its prop_index to i, then decrement the insertion index
 
 	//If inserting, insert the new Prop at the insertion indexand increment the insertion index(of course checking the buffer has the room)
@@ -103,6 +103,11 @@ private:
 	//This will form an array of pointers that are contiguous in memory.Simply iterate from 0 through insertion_index when drawing / ticking physics, etc(or even better, do it all in parrallel
 
 	//For bonus points, Prop's constructor will automatically register itself in Engine, so you can't possibly have a valid yet detached Prop.
+};
+
+
+
+
 
 #include "prop.h"
 
@@ -114,7 +119,7 @@ Engine::Engine(const char* title, int width, int height)
 	window_width = width;
 	window_height = height;
 
-	
+
 	if (SDL_Init(SDL_INIT_VIDEO) < 0)
 	{
 		std::cerr << "Initialization failed: SDL_Error: " << SDL_GetError() << "\n";
@@ -170,7 +175,8 @@ Engine::~Engine() {
 	{
 		SDL_GL_DeleteContext(context);
 	}
-	if (window) {
+	if (window)
+	{
 		SDL_DestroyWindow(window);
 	}
 	SDL_Quit();
@@ -188,9 +194,9 @@ void Engine::run()
 	// buffering
 	glClearColor(0.4f, 0.4f, 0.4f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-	
 
-	glColor3b(0, 0, 0);
+
+	glColor3b(0, 0, 0); // test color (make sure triangles draw)
 	// Rendering the Props
 	for (size_t i = 0; i < MAX_PROPS; i++)
 	{
@@ -248,7 +254,8 @@ bool Engine::addProp(Prop* added_prop)
 }
 void Engine::removeProp(Prop* removed_prop)
 {
-	if (!removed_prop) { return; }
+	
+	if (removed_prop == nullptr) { return; }
 	// Get the prop's index
 	int deleted_index = removed_prop->getID();
 
@@ -276,11 +283,11 @@ bool Engine::isValidProp(Prop* prop)
 	{
 		if (props[prop->getID()] == prop)
 		{
-			return 1;
+			return true;
 		}
 	}
 	return false;
 }
 
 
-#endif
+	#endif
