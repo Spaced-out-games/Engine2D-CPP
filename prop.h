@@ -42,13 +42,13 @@ public:
 
 private:
 	std::vector<Component*> components;
-	
+	int prop_ID;
 	int partition_index = 0;
 };
-Prop::Prop():
+Prop::Prop() :
 
 	// Automatically populate the prop_ID when it's created
-	prop_ID(Engine::getNextSlot())
+	prop_ID(Engine::getInstance()->getNextSlot())
 
 {}
 
