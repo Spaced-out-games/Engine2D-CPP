@@ -249,7 +249,7 @@ Error:
 int main()
 {
 
-
+    //std::cout << Engine::isInitialized();
     // Get the game instance
     static Engine* game = Engine::getInstance();
 
