@@ -21,6 +21,7 @@
 //#define ENGINE Engine::getGame()
 //#define CANVAS Engine::getGame().getCanvas
 class Prop;
+
 class Engine
 {
 public:
@@ -57,7 +58,9 @@ public:
 
 	bool isValidProp(Prop* prop);
 
-	int getNextSlot() { return partition_index; };
+	int getNextSlot() { return prop_count; };
+
+	//static bool isInitialized() { return initialized; }
 
 
 
@@ -78,14 +81,17 @@ private:
 	bool init_success;
 	bool vsync_success;
 	bool running = true;
+	//static bool initialized;
 	// Prop / component information
 
 	Prop* props[MAX_PROPS] = {};
 	//transformInfo transform_info[MAX_PROPS];
-	int partition_index = 0; // Point to the last index
+	int prop_count = 0; // Point to the last index
 
 	// The point of storing the transforms here is so that they have cache locality. Since I want movement to be handled on the GPU, these need to be close to each other anyway
 	transformInfo transforms[MAX_PROPS] = {};
+
+	
 
 	// Super funny smart good way of handling props:
 	// Continue using the array insertion index technique
@@ -243,11 +249,11 @@ SDL_GLContext& Engine::getContext()
 
 bool Engine::addProp(Prop* added_prop)
 {
-	if (partition_index < MAX_PROPS)
+	if (prop_count < MAX_PROPS)
 	{
-		props[partition_index] = added_prop;
-		props[partition_index]->setID(partition_index);
-		partition_index++;
+		props[prop_count] = added_prop;
+		props[prop_count]->setID(prop_count);
+		prop_count++;
 		return 1;
 	}
 	return 0;
@@ -263,16 +269,16 @@ void Engine::removeProp(Prop* removed_prop)
 	delete removed_prop;
 
 	// Since this prop is now invalid, move the last valid prop here
-	props[deleted_index] = props[partition_index];
+	props[deleted_index] = props[prop_count];
 
 	// Since we've moved the prop's pointer, that prop needs to update its ID
 	props[deleted_index]->setID(deleted_index);
 
 	// Since the last prop is pointed to twice in the array, set the original index to nullptr
-	props[partition_index] = nullptr;
+	props[prop_count] = nullptr;
 
 	// Since the original pointer is invalidated, advance the partition index backwards
-	partition_index--;
+	prop_count--;
 
 }
 
@@ -290,4 +296,4 @@ bool Engine::isValidProp(Prop* prop)
 }
 
 
-	#endif
+#endif
