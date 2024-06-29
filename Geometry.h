@@ -1,9 +1,13 @@
 #pragma once
 #ifndef GEOMETRY_H
 #define GEOMETRY_H
+
+
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
-// Contains an array of vertices. Simply initialize and call draw()
+#include <vector>
+#include <initializer_list>
+
 class Geometry {
 public:
     // Create a Geometry from an array of XYZ formatted floats
@@ -11,55 +15,64 @@ public:
 
     // Create a Geometry from an initializer list of XYZ formatted floats
     Geometry(std::initializer_list<GLfloat> vertex_data);
-    
+
     // destructor
     ~Geometry();
 
-    // Uploads geometry to the GPU
-    void upload();
 
-    // Gets the handle to the uploaded geometry in device VRAM
+    // Gets the handle to the uploaded Geometry in device VRAM
     GLuint getVao() const { return vao; }
 
     // gets Vertex count
-    size_t getVertexCount() const { return vertices.size() / 3; } // Assuming 3D vertices
-    
-    // draws the geometry
+    size_t getVertexCount() const { return vertexCount / 3; } // Assuming 3D vertices
+
+    // draws the Geometry
     void draw() const;
 
-    // Sets this geometry as the active VAO
+    // Sets this Geometry as the active VAO
     void bind() const;
 private:
     GLuint vao;
     GLuint vbo;
-    std::vector<float> vertices;
+    GLuint ebo; // not implemented
+
+    unsigned int vertexCount;
+
+    // Uploads Geometry to the GPU via an initializer list. Both are called on initiation
+
+    void upload(std::vector<GLfloat> vertices);
 };
-Geometry::Geometry(std::initializer_list<GLfloat> vertices) : vertices(vertices) {
-    if (vertices.size() % 3 != 0) {
+
+
+
+Geometry::Geometry(std::initializer_list<GLfloat> vertex_data) {
+    vao = 0;
+    vbo = 0;
+    if (vertexCount % 3 != 0) {
         throw std::invalid_argument("Vertex data must be a multiple of 3");
     }
 
     // Generate and bind VAO and VBO
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
-    upload();
+    upload(vertex_data);
 }
 
-Geometry::Geometry(const std::vector<float>& vertices)
-    : vertices(vertices), vao(0), vbo(0) {}
-
-Geometry::~Geometry() {
+Geometry::~Geometry()
+{
     glDeleteBuffers(1, &vbo);
     glDeleteVertexArrays(1, &vao);
 }
 
-void Geometry::upload() {
+
+void Geometry::upload(std::vector<GLfloat> vertices)
+{
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertexCount * 3 * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -68,12 +81,16 @@ void Geometry::upload() {
 }
 
 void Geometry::draw() const {
-    //std::cout << "drawn";
-    bind(); // Bind the VAO before drawing
-    glDrawArrays(GL_TRIANGLES, 0, vertices.size()); // Draw the geometry
-}
-void Geometry::bind() const {
-    glBindVertexArray(vao); // Set the active VAO
+    bind();
+    glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 }
 
-#endif
+void Geometry::bind() const {
+    glBindVertexArray(vao);
+}
+
+
+
+
+
+#endif // !Geometry_H
