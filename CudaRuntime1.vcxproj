@@ -88,11 +88,13 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BatchGeometry.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="hiddenPrivateMember_t.h" />
     <ClInclude Include="prop.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="shaderLibrary.h" />
     <ClInclude Include="transformInfo.h" />
