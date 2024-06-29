@@ -29,7 +29,7 @@ public:
 	glm::vec3 rotational_acceleration;
 	glm::vec3 getPosition();
 	void setPosition(glm::vec3 new_position);
-	glm::quat transformInfo::getRotation() const;
+	glm::quat getRotation() const;
 	void setRotation(const glm::quat& rotation);
 };
 
