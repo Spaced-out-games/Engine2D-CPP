@@ -10,9 +10,17 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="shared_types.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2BCAA9A2-F159-41D2-A060-4CCF8E4528F0}</ProjectGuid>
     <RootNamespace>CudaRuntime1</RootNamespace>
+    <ProjectName>Engine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -80,29 +88,6 @@
       <TargetMachinePlatform>64</TargetMachinePlatform>
     </CudaCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <CudaCompile Include="CUDAWrapper.cu" />
-    <CudaCompile Include="kernel.cu" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="BatchGeometry.h" />
-    <ClInclude Include="Component.h" />
-    <ClInclude Include="Engine.h" />
-    <ClInclude Include="Geometry.h" />
-    <ClInclude Include="hiddenPrivateMember_t.h" />
-    <ClInclude Include="prop.h" />
-    <ClInclude Include="Scene.h" />
-    <ClInclude Include="shader.h" />
-    <ClInclude Include="shaderLibrary.h" />
-    <ClInclude Include="transformInfo.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="frag.glsl" />
-    <None Include="vtx.glsl" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 12.5.targets" />
