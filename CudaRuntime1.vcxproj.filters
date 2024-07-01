@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="bitset_512.h">
+      <Filter>entity_collections</Filter>
+    </ClInclude>
+    <ClInclude Include="ent_block.h">
+      <Filter>entity_collections</Filter>
+    </ClInclude>
+    <ClInclude Include="ent_handle.h">
+      <Filter>entity_collections</Filter>
+    </ClInclude>
+    <ClInclude Include="ent_array.h">
+      <Filter>entity_collections</Filter>
+    </ClInclude>
+    <ClInclude Include="ent_manager.h">
+      <Filter>entity_collections</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="entity_collections">
+      <UniqueIdentifier>{604400ea-33b9-4681-ab64-5a054ce803d6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
