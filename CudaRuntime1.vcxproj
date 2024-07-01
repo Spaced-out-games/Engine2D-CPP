@@ -14,8 +14,12 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bitset_512.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="shared_types.h" />
+    <ClInclude Include="ent_array.h" />
+    <ClInclude Include="ent_block.h" />
+    <ClInclude Include="ent_handle.h" />
+    <ClInclude Include="ent_manager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2BCAA9A2-F159-41D2-A060-4CCF8E4528F0}</ProjectGuid>
@@ -58,6 +62,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>D:\C++ Libraries\glm-master\include;D:\C++ Libraries\glew-2.2.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
