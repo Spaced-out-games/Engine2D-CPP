@@ -16,6 +16,9 @@ public:
     {
         // Create and store a new ent_array<T> instance
         arrays_.emplace_back(ent_array<T>());
+
+        // Automatically flag this ent_array for cleanup
+        auto_cleanup.set(arrays_.size(), 1);
     }
 
     template<typename T>
@@ -44,8 +47,11 @@ public:
         throw std::out_of_range("No ent_array found for the specified type");
     }
 
+
+
 private:
     std::vector<std::any> arrays_;
+    bitset_512 auto_cleanup;
 };
 
 #endif // ENT_ARRAY_MANAGER_H
