@@ -18,6 +18,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="ent_array.h" />
     <ClInclude Include="ent_block.h" />
+    <ClInclude Include="ent_cleanup.h" />
     <ClInclude Include="ent_handle.h" />
     <ClInclude Include="ent_manager.h" />
   </ItemGroup>
