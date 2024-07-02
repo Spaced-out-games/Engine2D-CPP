@@ -1,23 +1,44 @@
 #include "ent_manager.h"
 #include <iostream>
+#include <random>
+int main() {
+    // Create an ent_array of integers
+    ent_array<int> array;
 
-int main()
-{
-    ent_manager manager;
+    // Add blocks to the array
+    array.add_block();
+    array.add_block();
+    //array.add_block();
 
-    // Add ent_array for different types
-    manager.add_array<int>();
-    manager.add_array<float>();
+    // Populate blocks with integers
+    for (int i = 0; i < 1000; ++i) {
+        array.insert(i);
+    }
+    for (size_t i = 0; i < 92; i++)
+    {
+        array.remove(rand() % 1000);
+    }
 
-    // Get and use ent_array<int>
-    auto& int_array = manager.get_array<int>();
-    ent_handle int_handle = int_array.insert(42);
-    std::cout << "Inserted int: " << int_array.get(int_handle) << std::endl;
+    
 
-    // Get and use ent_array<float>
-    auto& float_array = manager.get_array<float>();
-    ent_handle float_handle = float_array.insert(3.14f);
-    std::cout << "Inserted float: " << float_array.get(float_handle) << std::endl;
+    std::cout << "Before compression:" << std::endl;
+    //array.print_blocks();
+    array.print_blocks();
+    std::cout << '\n';
+    //array.print_bitset(1);
+    
+
+    std::cout << "Compressing...";
+    // Perform compression
+    array.compress();
+    std::cout << "Done!" << std::endl;
+
+
+
+    std::cout << "After compression:" << std::endl;
+    array.print_blocks();
+    std::cout << '\n';
+    //array.print_bitset(1);
 
     return 0;
 }
