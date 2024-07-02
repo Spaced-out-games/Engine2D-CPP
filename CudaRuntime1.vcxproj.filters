@@ -4,25 +4,30 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Entity.h" />
     <ClInclude Include="bitset_512.h">
-      <Filter>entity_collections</Filter>
+      <Filter>entity_system</Filter>
     </ClInclude>
     <ClInclude Include="ent_block.h">
-      <Filter>entity_collections</Filter>
+      <Filter>entity_system</Filter>
     </ClInclude>
     <ClInclude Include="ent_handle.h">
-      <Filter>entity_collections</Filter>
+      <Filter>entity_system</Filter>
     </ClInclude>
     <ClInclude Include="ent_array.h">
-      <Filter>entity_collections</Filter>
+      <Filter>entity_system</Filter>
     </ClInclude>
     <ClInclude Include="ent_manager.h">
-      <Filter>entity_collections</Filter>
+      <Filter>entity_system</Filter>
+    </ClInclude>
+    <ClInclude Include="ent_cleanup.h">
+      <Filter>entity_system</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>entity_system</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="entity_collections">
+    <Filter Include="entity_system">
       <UniqueIdentifier>{604400ea-33b9-4681-ab64-5a054ce803d6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
