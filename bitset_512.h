@@ -55,32 +55,38 @@ public:
         std::memset(states, 0xff, sizeof(states));
     }
 
-    // Find the first empty slot
-    int find_first_empty_slot() const
-    {
-        for (size_t i = 0; i < NUM_BLOCKS; ++i)
-        {
+    int find_first_empty_slot() const {
+        for (size_t i = 0; i < NUM_BLOCKS; ++i) {
             uint64_t block = states[i];
             uint64_t not_full_block = ~block;
 
-            if (not_full_block)
-            {
+            if (not_full_block) {
                 unsigned long bit_index;
-                // Check for platform compatibility
-                #if defined(_MSC_VER)
-                if (_BitScanForward64(&bit_index, not_full_block))
-                    #else
-                        // Use portable implementation if available
-                bit_index = __builtin_ctzll(not_full_block);
-                #endif
-                {
-                    // Compute the position in the current block
+                if (_BitScanForward64(&bit_index, not_full_block)) {
                     return i * (sizeof(bitset_atomic_t) * 8) + bit_index;
                 }
             }
         }
 
-        return -1; // No empty slot found
+        return -1;
+    }
+
+    int find_last_set_bit() const {
+        for (int i = NUM_BLOCKS - 1; i >= 0; --i) {
+            uint64_t block = states[i];
+
+            if (block != 0) {
+                unsigned long bit_index;
+                #if defined(_MSC_VER) // Visual Studio
+                _BitScanReverse64(&bit_index, block);
+                #else // GCC/Clang
+                bit_index = 63 - __builtin_clzll(block);
+                #endif
+                return i * (sizeof(bitset_atomic_t) * 8) + bit_index;
+            }
+        }
+
+        return -1;
     }
 
 private:
