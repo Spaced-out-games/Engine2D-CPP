@@ -1,6 +1,6 @@
 #ifndef SHARED_TYPES_H
 #define SHARED_TYPES_H
-
+/*
 #include <cstdint>
 #include <cstring> // for C's memset
 #include <iostream>
@@ -38,94 +38,6 @@ typedef struct atomic_location // need a better name
     bitset_size_t atomic_index;
 
 } atomic_location;
-
-
-// A bitset of BITSET_SIZE_BITS states. 
-typedef struct bitset_512
-{
-    bitset_512()
-    {
-        std::memset(states, 0, sizeof(states));
-    }
-
-    void set(bitset_size_t index, bool state)
-    {
-        bitset_size_t array_index = index / (sizeof(bitset_atomic_t) * 8);
-        bitset_size_t bit_index = index % (sizeof(bitset_atomic_t) * 8);
-
-        bitset_atomic_t mask = bitset_atomic_t(1) << bit_index;
-        if (state)
-            states[array_index] |= mask;
-        else
-            states[array_index] &= ~mask;
-    }
-
-    bool get(bitset_size_t index) const
-    {
-        bitset_size_t array_index = index / (sizeof(bitset_atomic_t) * 8);
-        bitset_size_t bit_index = index % (sizeof(bitset_atomic_t) * 8);
-
-        bitset_atomic_t mask = bitset_atomic_t(1) << bit_index;
-        return (states[array_index] & mask) != 0;
-    }
-
-    void zeros() { std::memset(states, 0, sizeof(states)); }
-
-    void ones () { std::memset(states, 0xff, sizeof(states)); }
-
-    // Access individual bits using []
-    bool operator[](bitset_size_t index) const
-    {
-        return get(index);
-    }
-
-    // Non-const version for setting bits
-    bool& operator[](bitset_size_t index)
-    {
-        static bool bit_val;
-        bit_val = get(index);
-        return bit_val;
-    }
-
-
-    // Find the first empty slot
-    int find_first_empty_slot() const
-    {
-        for (size_t i = 0; i < NUM_BLOCKS; ++i)
-        {
-            uint64_t block = states[i];
-            uint64_t not_full_block = ~block;
-
-            if (not_full_block)
-            {
-                unsigned long bit_index;
-                // Find the lowest bit set in not_full_block
-                if (_BitScanForward64(&bit_index, not_full_block))
-                {
-                    // Compute the position in the current block
-                    return i * (sizeof(bitset_atomic_t) * 8) + bit_index;
-                }
-            }
-        }
-
-        return -1; // No empty slot found
-    }
-
-private:
-    bitset_atomic_t states[8]; // BITSET_SIZE_BITS bits / 64 bits per uint64_t = 8 uint64_t elements
-} bitset_512;
-
-// Output the bitset to an ostream
-std::ostream& operator<<(std::ostream& os, const bitset_512& bs)
-{
-    for (bitset_size_t i = 0; i < BITSET_SIZE_BITS; ++i)
-    {
-        os << (bs.get(i) ? '1' : '0');
-        //if (i % 8 == 7) os << ' ';
-        if (i % 64 == 63) os << '\n';
-    }
-    return os;
-}
 
 
 
@@ -259,4 +171,6 @@ typedef struct ent_handle
 
 
 };
+
+*/
 #endif
