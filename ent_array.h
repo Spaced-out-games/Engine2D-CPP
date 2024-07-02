@@ -98,78 +98,80 @@ public:
 
     void compress()
     {
-        // The block index of the left pointer
+        //blocks[0].remove(2);
+        if (blocks.empty()) return;
+
+        // Initialize block indices
         size_t leftmost_block_index = 0;
-
-        // The left pointer block index
-        size_t left_index = 0;
-
-        // The block index of the right pointer
-        size_t rightmost_block_index = size() - 1;
-
-        // The right pointer block index
-        size_t right_index = 0;
+        size_t rightmost_block_index = blocks.size() - 1;
+        int left_index = -1;
+        int right_index = -1;
 
         // Find the leftmost block that isn't full
-        while (!blocks[leftmost_block_index].isFull() && leftmost_block_index < blocks.size())
-        {
+        while (leftmost_block_index < blocks.size() && blocks[leftmost_block_index].isFull()) {
             leftmost_block_index++;
         }
 
-        // If we got to the end from the left and there wasnt any empty slots, abort
-        if (leftmost_block_index == blocks.size() && !blocks[leftmost_block_index -1].isFull()) { return; }
+        // If we found no non-full blocks, there's nothing to compress
+        //if (leftmost_block_index >= blocks.size()) return;
 
         // Find the rightmost block that has contents
-        while (blocks[rightmost_block_index].isEmpty() && rightmost_block_index >= 0)
-        {
+        while (rightmost_block_index > leftmost_block_index && blocks[rightmost_block_index].isEmpty()) {
             rightmost_block_index--;
         }
-        // If we got to the beginning of the array and it has no contents, abort
-        if (rightmost_block_index == -1 && blocks[0].isEmpty()) { return; }
+
+        // If we found no non-empty blocks, there's nothing to compress
+        //if (rightmost_block_index <= leftmost_block_index) return;
 
 
+        int debug_itercnt = 0;
 
-        // Now that we have the correct starting blocks, find the correct indices
-        while (leftmost_block_index < rightmost_block_index)
+        int debug_hitch = 0;
+        // Process blocks to compress them
+        while (!(leftmost_block_index == rightmost_block_index && right_index == left_index + 1))
         {
-            // Get the index of the first empty element in the leftmost block
+
+
+
+            // Get the index of the first empty slot in the leftmost block
             left_index = blocks[leftmost_block_index].getFirstEmpty();
 
-            // Get the index of the last occupied element of the rightmost block
+            // Get the index of the last occupied slot in the rightmost block
             right_index = blocks[rightmost_block_index].getLastFull();
 
-            // Move either block inward if necessary
-
-            // There are no empty spaces on the left
-            while (left_index == -1)
+            // Move inward if necessary
+            while (left_index == -1 && leftmost_block_index < rightmost_block_index)
             {
-                // So move inward from the left
                 leftmost_block_index++;
+                if (leftmost_block_index >= blocks.size()) break;
                 left_index = blocks[leftmost_block_index].getFirstEmpty();
             }
 
-            // There are no occupied spaces on the right
-            while (right_index == -1)
+            while (right_index == -1 && rightmost_block_index > leftmost_block_index)
             {
                 rightmost_block_index--;
+                if (rightmost_block_index == static_cast<size_t>(-1)) break;
                 right_index = blocks[rightmost_block_index].getLastFull();
             }
 
-            // Now that we have verified we have valid block indices, move from the right to the left
+            // Ensure valid indices before proceeding
+            if (left_index != -1 && right_index != -1)
+            {
+                // Move entity from the rightmost block to the leftmost block
+                blocks[leftmost_block_index].insert(blocks[rightmost_block_index].get_entity(right_index));
 
-            // Insert a copy of the rightmost to the leftmost slot
-            blocks[leftmost_block_index].insert(blocks[rightmost_block_index].get_entity(right_index));
+                // Update the bitsets
+                blocks[rightmost_block_index].get_bitset().set(right_index, 0);  // Mark slot as empty
+                blocks[leftmost_block_index].get_bitset().set(left_index, 1);   // Mark slot as occupied
+            }
+            else
+            {
+                // If no valid slots are found, break the loop
+                break;
+            }
 
-            // Update the state of the rightmost
-            blocks[rightmost_block_index].get_bitset().set(right_index, 0);
-
-            // And update the state of the leftmost
-            blocks[leftmost_block_index].get_bitset().set(left_index, 1);
-
-
+            //if (leftmost_block_index == rightmost_block_index && right_index == left_index + 1) { break; }
         }
-
-
     }
 
     void add_block() {
@@ -189,8 +191,13 @@ public:
                     std::cout << "(EMPTY SLOT)";
                 }
             }
-            std::cout << std::endl;
         }
+    }
+    void print_bitset(int index)
+    {
+        auto& target_block = blocks[index];
+
+        std::cout << target_block.get_bitset();
     }
 private:
     std::vector<ent_block<T>> blocks; // Vector of blocks
