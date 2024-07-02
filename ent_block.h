@@ -14,7 +14,7 @@ public:
     // Insert an entity and return the ent_handle for it
     ent_handle insert(const T& entity)
     {
-        bitset_size_t index = states.find_first_empty_slot();
+        int index = states.find_first_empty_slot();
         if (index != -1)
         {
             entities[index] = entity;
@@ -24,6 +24,8 @@ public:
         }
         throw std::overflow_error("No available slot to insert entity");
     }
+
+
 
     // Retrieve an entity using an ent_handle
     T get(const ent_handle& handle) const
@@ -55,12 +57,15 @@ public:
         }
     }
 
+
     // Reset all entities to invalid
     void reset()
     {
         states.zeros(); // Mark all as invalid
         entity_count = 0;
     }
+
+    bitset_512& get_bitset() { return states; }
 
     // Get the current number of entities
     bitset_size_t size() const
@@ -79,6 +84,14 @@ public:
     {
         return entity_count == BITSET_SIZE_BITS;
     }
+    bool isEmpty() const { return entity_count == 0; }
+
+    T& get_entity(int i) { return entities[i]; }
+
+    int getFirstEmpty() { return states.find_first_empty_slot(); }
+    int getLastFull() { return states.find_last_set_bit(); }
+
+
 
 private:
     T entities[BITSET_SIZE_BITS]; // Array to store entities
