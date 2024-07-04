@@ -47,7 +47,15 @@ public:
         throw std::out_of_range("No ent_array found for the specified type");
     }
 
+    template<typename T>
+    const T& getEntity(ent_handle handle) const
+    {
+        // Access the correct ent_array using the type_ID from the handle
+        const ent_array<T>& arr = get_array<T>();
 
+        // Get the entity from the correct block and index within the array
+        return arr.getEntity(handle.block_ID, handle.ent_index);
+    }   
 
 private:
     std::vector<std::any> arrays_;
