@@ -94,8 +94,6 @@ public:
         blocks.clear();
     }
 
-
-
     void compress()
     {
         //blocks[0].remove(2);
@@ -193,12 +191,14 @@ public:
             }
         }
     }
+    
     void print_bitset(int index)
     {
         auto& target_block = blocks[index];
 
         std::cout << target_block.get_bitset();
     }
+
 private:
     std::vector<ent_block<T>> blocks; // Vector of blocks
 };
