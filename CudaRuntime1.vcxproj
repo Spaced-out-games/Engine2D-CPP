@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="basic_shader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitset_512.h" />
@@ -21,6 +22,8 @@
     <ClInclude Include="ent_cleanup.h" />
     <ClInclude Include="ent_handle.h" />
     <ClInclude Include="ent_manager.h" />
+    <ClInclude Include="shader.h" />
+    <ClInclude Include="shader_manager.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2BCAA9A2-F159-41D2-A060-4CCF8E4528F0}</ProjectGuid>
