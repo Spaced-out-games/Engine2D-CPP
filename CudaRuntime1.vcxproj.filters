@@ -2,6 +2,9 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="basic_shader.h">
+      <Filter>shader_system</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitset_512.h">
@@ -25,10 +28,19 @@
     <ClInclude Include="Entity.h">
       <Filter>entity_system</Filter>
     </ClInclude>
+    <ClInclude Include="shader_manager.h">
+      <Filter>shader_system</Filter>
+    </ClInclude>
+    <ClInclude Include="shader.h">
+      <Filter>shader_system</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="entity_system">
       <UniqueIdentifier>{604400ea-33b9-4681-ab64-5a054ce803d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shader_system">
+      <UniqueIdentifier>{2bd8721c-7baf-4155-aabc-120cd24fbfee}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
