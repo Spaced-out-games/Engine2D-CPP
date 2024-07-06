@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="basic_shader.h">
-      <Filter>shader_system</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitset_512.h">
@@ -34,6 +31,9 @@
     <ClInclude Include="shader.h">
       <Filter>shader_system</Filter>
     </ClInclude>
+    <ClInclude Include="file_utils.h">
+      <Filter>FileIO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="entity_system">
@@ -41,6 +41,9 @@
     </Filter>
     <Filter Include="shader_system">
       <UniqueIdentifier>{2bd8721c-7baf-4155-aabc-120cd24fbfee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FileIO">
+      <UniqueIdentifier>{d1371336-2731-4c35-a8bb-60929ef74f6b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
