@@ -9,6 +9,8 @@
 
 class Controller;
 
+
+
 class engineCore
 {
 public:
@@ -32,10 +34,12 @@ public:
 	// Handles IO for a tick
 	void IO_tick();
 
-	static bool init_core(const char* title, int width, int height);
+	static bool init_core(int argc, char* argv[]);
 
 	// Gets a singleton instance of engineCore
 	static engineCore* getEngineCore();
+	//static engineCore* getEngineCore(const char* title, int width, int height);
+
 
 	// Gets the OpenGL context of this instance of engineCore
 	const SDL_GLContext& getContext();
@@ -92,6 +96,8 @@ private:
 	Controller* controller;
 
 	static engineCore* instance;
+
+	void parse_arg(const char* argument);
 
 };
 
@@ -201,6 +207,9 @@ void engineCore::IO_tick()
 	}
 }
 
+void engineCore::phys_tick() {}
+
+/*
 engineCore* engineCore::getEngineCore()
 {
 	if (!instance)
@@ -209,6 +218,8 @@ engineCore* engineCore::getEngineCore()
 	}
 	return instance;
 }
+*/
+
 
 void engineCore::bootstrap() {}
 
@@ -218,6 +229,34 @@ int engineCore::main()
 	while (running)
 	{
 		IO_tick();
+		phys_tick();
+		graphics_tick();
 	}
 	return 0;
+}
+
+
+bool engineCore::init_core(int argc, char* argv[])
+{
+	for (int i = 0; i < argc; i++)
+	{
+		instance->parse_arg(argv[i]);
+	}
+	if (instance == nullptr)
+	{
+		instance = new engineCore("placeholder", 480, 480);
+		return instance->init_success; // Return initialization success status
+	}
+	return false; // Instance already initialized
+}
+
+void engineCore::parse_arg(const char* arg)
+{
+
+}
+
+// Gets the singleton instance without initializing
+engineCore* engineCore::getEngineCore()
+{
+	return instance;
 }
