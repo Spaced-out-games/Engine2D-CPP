@@ -56,7 +56,7 @@ public:
     }
 
     int find_first_empty_slot() const {
-        for (size_t i = 0; i < NUM_BLOCKS; ++i) {
+        for (int i = 0; i < NUM_BLOCKS; ++i) {
             uint64_t block = states[i];
             uint64_t not_full_block = ~block;
 
