@@ -10,6 +10,6 @@ typedef struct ent_handle
 	type_t type_ID;
 	bitset_size_t block_ID;
 	bitset_size_t ent_index;
-};
+} ent_handle;
 
 #endif
