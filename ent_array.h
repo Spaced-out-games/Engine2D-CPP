@@ -179,15 +179,28 @@ public:
     //template <typename T>
     void print_blocks() {
         for (size_t i = 0; i < blocks.size(); ++i) {
-            std::cout << "Block " << i << ": ";
+            std::cout << "\nBlock " << i << ": \n";
             for (int j = 0; j < 512; ++j) {
                 if (blocks[i].get_bitset().get(j)) {
-                    std::cout << blocks[i].get_entity(j) << " ";
+                    std::cout << blocks[i].get_entity(j) << "\t";
                 }
                 else
                 {
-                    std::cout << "(EMPTY SLOT)";
+                    std::cout << "(X) \t";
                 }
+            }
+        }
+    }
+    void print_block(int blockID) {
+
+        std::cout << "\nBlock " << blockID << ": \n";
+        for (int j = 0; j < 512; ++j) {
+            if (blocks[blockID].get_bitset().get(j)) {
+                std::cout << blocks[blockID].get_entity(j) << "\t";
+            }
+            else
+            {
+                std::cout << "(X) \t";
             }
         }
     }
