@@ -1,0 +1,2 @@
+// This is an optimization suite. Collision hulls will only be tested against only the collision hulls in adjacent cells. Hitboxes will declare an onMove() method. 
+// that defaults to adding itself to the hb_grid in the appropriate cell. Hitboxes will provide an interface for moving around, and this will call onMove()

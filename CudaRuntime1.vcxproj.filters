@@ -34,6 +34,24 @@
     <ClInclude Include="file_utils.h">
       <Filter>FileIO</Filter>
     </ClInclude>
+    <ClInclude Include="engineCore.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="hb.h">
+      <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="hb_manager.h">
+      <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="hb_grid2D.h">
+      <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="hb_grid3D.h">
+      <Filter>physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Controller.h">
+      <Filter>GameIO</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="entity_system">
@@ -44,6 +62,15 @@
     </Filter>
     <Filter Include="FileIO">
       <UniqueIdentifier>{d1371336-2731-4c35-a8bb-60929ef74f6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{d2206abb-5c90-4957-bd0b-3d3c5ff7006c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="physics">
+      <UniqueIdentifier>{5f994e85-ae96-4bc2-a233-f994b5aafadc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameIO">
+      <UniqueIdentifier>{59c3b2d2-5130-4fdf-9721-d39e42a95ea7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

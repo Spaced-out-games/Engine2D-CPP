@@ -1,0 +1,1 @@
+// Manages 2D and 3D hitboxes alike, and handles collision checks performed on the GPU (for vectorized collision checking

@@ -1,0 +1,1 @@
+// Defines 2D and 3D hitboxes and collision detection on the CPU
