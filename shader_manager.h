@@ -6,27 +6,58 @@
 #include <GL/glew.h>
 #include <fstream>
 #include <sstream>
-#include "basic_shader.h"
+#include "shader.h"
 #include <glm/glm.hpp>         // Core GLM functionality
 #include <glm/vec3.hpp>        // glm::vec3
 #include <glm/mat4x4.hpp>      // glm::mat4
+
+
+// Contains a list of shaders constructed from 
+//TODO: make into a singleton
+
 class shader_manager
 {
 public:
-	shader_manager();
-	~shader_manager();
-	static basic_shader compile(const std::string& source, GLenum shader_type);
-	static basic_shader compileFromFile(const std::string& path, GLenum shader_type);
 
-    int addShader(basic_shader new_shader);
-    int addShader(const std::string& source, GLenum shader_type);
-    int addShader(const std::string& path, GLenum shader_type);
-    void link(GLuint vertexShader, GLuint fragmentShader);
+	shader_manager();
+	
+    ~shader_manager();
+
+    static int load_shader(const std::string& fragmentPath, const std::string& vertexPath);
+
+
+    static int load_shader(const std::string& shaderPath);
+
+    static int compile_shader(const std::string& fragmentSource, const std::string& vertexSource);
+
+    static int compile_shader(const std::string& shaderSource);
+
+    static void use();
+
+    static int add_shader(shader new_shader);
+
+    static void link();
+
+    static shader make_shader(const std::string& fragmentSource, const std::string& vertexSource);
+
+    static shader make_shader(const std::string& shaderSource);
+
+    static shader make_shader(const std::string& fragmentPath, const std::string& vertexPath);
+
+    static shader make_shader(const std::string& shaderPath);
+
+    static shader_manager& getMaster();
+
+
+
 
 
 private:
     std::vector<shader> shaders;
+
+    static shader_manager master_shader_manager;
 };
+
 shader_manager::shader_manager() {}
 
 shader_manager::~shader_manager() {}
