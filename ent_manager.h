@@ -48,14 +48,21 @@ public:
     }
 
     template<typename T>
-    const T& getEntity(ent_handle handle) const
+    T getEntity(ent_handle handle)
     {
         // Access the correct ent_array using the type_ID from the handle
-        const ent_array<T>& arr = get_array<T>();
+        ent_array<T> arr = get_array<T>();
 
         // Get the entity from the correct block and index within the array
-        return arr.getEntity(handle.block_ID, handle.ent_index);
-    }   
+        auto a = arr.get(handle);
+        return a;
+    }  
+    template <typename T>
+    const T& getEntity(int index)
+    {
+        const ent_array<T>& arr = get_array<T>();
+        return arr.get(index);
+    }
 
 private:
     std::vector<std::any> arrays_;

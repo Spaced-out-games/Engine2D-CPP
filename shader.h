@@ -1,3 +1,7 @@
+#pragma once
+#ifndef SHADER_H
+#define SHADER_H
+
 #include <string>
 #include <GL/glew.h>
 #include <iostream>
@@ -6,6 +10,7 @@
 #include <glm/glm.hpp>         // Core GLM functionality
 #include <glm/vec3.hpp>        // glm::vec3
 #include <glm/mat4x4.hpp>      // glm::mat4
+//#define SHADER_DEBUG
 
 class Shader {
     friend class shader_manager;
@@ -88,6 +93,12 @@ private:
         GLuint shader = glCreateShader(type);
         glShaderSource(shader, 1, &source, nullptr);
         glCompileShader(shader);
+        #ifdef SHADER_DEBUG
+        std::cout
+            << "------------------------------------------------SOURCE BEGIN------------------------------------------------\n"
+            << source << '\n'
+            << "------------------------------------------------SOURCE  END ------------------------------------------------\n";
+        #endif
         checkCompileErrors(shader, type == GL_VERTEX_SHADER ? "VERTEX" : "FRAGMENT");
         return shader;
     }

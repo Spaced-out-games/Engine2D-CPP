@@ -12,10 +12,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="rectangle_success.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="basic_array.h" />
     <ClInclude Include="bitset_512.h" />
+    <ClInclude Include="CLArgument.h" />
     <ClInclude Include="Controller.h" />
+    <ClInclude Include="CoreTest.h" />
     <ClInclude Include="engineCore.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="ent_array.h" />
@@ -24,12 +28,24 @@
     <ClInclude Include="ent_handle.h" />
     <ClInclude Include="ent_manager.h" />
     <ClInclude Include="file_utils.h" />
+    <ClInclude Include="glm_utils.h" />
+    <ClInclude Include="GUIRect.h" />
+    <ClInclude Include="GUI_Node.h" />
     <ClInclude Include="hb_grid3D.h" />
     <ClInclude Include="hb_manager.h" />
     <ClInclude Include="hb.h" />
     <ClInclude Include="hb_grid2D.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="pair2D.h" />
+    <ClInclude Include="MeshFactory.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="shader_manager.h" />
+    <ClInclude Include="test.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\CudaRuntime1\frag.glsl" />
+    <None Include="..\CudaRuntime1\vtx.glsl" />
+    <None Include="basic_shader.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2BCAA9A2-F159-41D2-A060-4CCF8E4528F0}</ProjectGuid>

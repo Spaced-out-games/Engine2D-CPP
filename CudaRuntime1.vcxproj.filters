@@ -2,6 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="rectangle_success.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitset_512.h">
@@ -52,6 +53,34 @@
     <ClInclude Include="Controller.h">
       <Filter>GameIO</Filter>
     </ClInclude>
+    <ClInclude Include="CLArgument.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI_Node.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="basic_array.h">
+      <Filter>data_structures</Filter>
+    </ClInclude>
+    <ClInclude Include="pair2D.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIRect.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="test.h" />
+    <ClInclude Include="Mesh.h">
+      <Filter>Graphics\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshFactory.h">
+      <Filter>Graphics\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="glm_utils.h">
+      <Filter>Graphics\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="CoreTest.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="entity_system">
@@ -72,5 +101,27 @@
     <Filter Include="GameIO">
       <UniqueIdentifier>{59c3b2d2-5130-4fdf-9721-d39e42a95ea7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{a0f283a9-3dba-4b0c-9cb8-8e6a634829f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data_structures">
+      <UniqueIdentifier>{ec8d1fbe-0f85-4acf-b73e-583c9d6c5546}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{018d9855-e037-41ba-be98-606602f2f220}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\Geometry">
+      <UniqueIdentifier>{2023fcf8-b23e-4207-a1e5-6bf6decb0cb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics\shaders">
+      <UniqueIdentifier>{7c00b9b6-8e36-4c57-871b-290fff5d7c3b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="basic_shader.glsl">
+      <Filter>Graphics\shaders</Filter>
+    </None>
+    <None Include="..\CudaRuntime1\frag.glsl" />
+    <None Include="..\CudaRuntime1\vtx.glsl" />
   </ItemGroup>
 </Project>

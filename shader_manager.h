@@ -4,182 +4,98 @@
 #include <vector>
 #include <string>
 #include <GL/glew.h>
-#include <fstream>
-#include <sstream>
+#include <glm/glm.hpp>
 #include "shader.h"
-#include <glm/glm.hpp>         // Core GLM functionality
-#include <glm/vec3.hpp>        // glm::vec3
-#include <glm/mat4x4.hpp>      // glm::mat4
 
-
-// Contains a list of shaders constructed from 
-//TODO: make into a singleton
-
+// Shader manager class that manages multiple shader programs
 class shader_manager
 {
 public:
-
-	shader_manager();
-	
-    ~shader_manager();
-
+    // Load a shader program from vertex and fragment shader files
     static int load_shader(const std::string& fragmentPath, const std::string& vertexPath);
 
-
+    // Load a shader program from a single file with embedded vertex and fragment shaders
     static int load_shader(const std::string& shaderPath);
 
-    static int compile_shader(const std::string& fragmentSource, const std::string& vertexSource);
+    // Set the current shader program to use by its ID
+    static void use(int shaderID);
 
-    static int compile_shader(const std::string& shaderSource);
+    // Get the Shader object by ID
+    static Shader* get_shader(int shaderID);
 
-    static void use();
+    // Set uniform matrix for the currently active shader
+    static void setUniform(const std::string& name, const glm::mat4& mat);
 
-    static int add_shader(shader new_shader);
+    // Set uniform float for the currently active shader
+    static void setUniform(const std::string& name, float value);
 
-    static void link();
-
-    static shader make_shader(const std::string& fragmentSource, const std::string& vertexSource);
-
-    static shader make_shader(const std::string& shaderSource);
-
-    static shader make_shader(const std::string& fragmentPath, const std::string& vertexPath);
-
-    static shader make_shader(const std::string& shaderPath);
-
-    static shader_manager& getMaster();
-
-
-
-
+    // Retrieve the singleton instance of shader_manager
+    static shader_manager& getInstance();
+    //static void make_instance() { master_shader_manager = shader_manager(); }
+    ~shader_manager() = default;
 
 private:
-    std::vector<shader> shaders;
+    shader_manager() = default;
+    
+
+    std::vector<Shader> shaders;
+    int currentShaderID = -1;
 
     static shader_manager master_shader_manager;
 };
+// Static member initialization
+shader_manager shader_manager::master_shader_manager = shader_manager();
 
-shader_manager::shader_manager() {}
-
-shader_manager::~shader_manager() {}
-
-basic_shader shader_manager::compile(const std::string& source, GLenum type)
-{
-    GLuint shader_ID = glCreateShader(type);
-    glShaderSource(shader_D, 1, &source, nullptr);
-    glCompileShader(shader_ID);
-
-    int success;
-    glGetShaderiv(shader_ID, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        char infoLog[512];
-        glGetShaderInfoLog(basic_shader, 512, nullptr, infoLog);
-        std::cerr << "Error: Shader compilation failed\n" << infoLog << std::endl;
-    }
-
-    return basic_shader(shader_ID);
+int shader_manager::load_shader(const std::string& fragmentPath, const std::string& vertexPath) {
+    Shader newShader(vertexPath, fragmentPath);
+    int id = static_cast<int>(shader_manager::getInstance().shaders.size());
+    shader_manager::getInstance().shaders.push_back(newShader);
+    return id;
 }
 
-basic_shader shader_manager::compileFromFile(const std::string& path, GLenum type) {
-    std::ifstream shaderFile(path);
-    std::stringstream shaderStream;
-    shaderStream << shaderFile.rdbuf();
-    std::string shaderCode = shaderStream.str();
-    const char* shaderSource = shaderCode.c_str();
-
-    GLuint shader_ID = glCreateShader(type);
-    glShaderSource(shader_ID, 1, &shaderSource, nullptr);
-    glCompileShader(shader_ID);
-
-    int success;
-    glGetShaderiv(shader_ID, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        char infoLog[512];
-        glGetShaderInfoLog(shader_ID, 512, nullptr, infoLog);
-        std::cerr << "Error: Shader compilation failed\n" << infoLog << std::endl;
-    }
-
-    return basic_shader(shader_ID);
+int shader_manager::load_shader(const std::string& shaderPath) {
+    Shader newShader(shaderPath);
+    int id = static_cast<int>(shader_manager::getInstance().shaders.size());
+    shader_manager::getInstance().shaders.push_back(newShader);
+    return id;
 }
 
-int shader_manager::addShader(const std::string& source, GLenum shader_type)
-{
-    GLuint shader_ID = glCreateShader(type);
-    glShaderSource(shader_D, 1, &source, nullptr);
-    glCompileShader(shader_ID);
-
-    int success;
-    glGetShaderiv(shader_ID, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        char infoLog[512];
-        glGetShaderInfoLog(basic_shader, 512, nullptr, infoLog);
-        std::cerr << "Error: Shader compilation failed\n" << infoLog << std::endl;
+void shader_manager::use(int shaderID) {
+    if (shaderID >= 0 && shaderID < shader_manager::getInstance().shaders.size()) {
+        shader_manager::getInstance().shaders[shaderID].use();
+        shader_manager::getInstance().currentShaderID = shaderID;
     }
-    shaders.push_back(basic_shader(shader_ID));
-    return shaders.size() - 1;
-
+    else {
+        std::cerr << "Invalid shader ID: " << shaderID << std::endl;
+    }
 }
 
-int shader_manager::addShader(const std::string& path, GLenum shader_type)
-{
-    std::ifstream shaderFile(path);
-    std::stringstream shaderStream;
-    shaderStream << shaderFile.rdbuf();
-    std::string shaderCode = shaderStream.str();
-    const char* shaderSource = shaderCode.c_str();
-
-    GLuint shader_ID = glCreateShader(type);
-    glShaderSource(shader_ID, 1, &shaderSource, nullptr);
-    glCompileShader(shader_ID);
-
-    int success;
-    glGetShaderiv(shader_ID, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        char infoLog[512];
-        glGetShaderInfoLog(shader_ID, 512, nullptr, infoLog);
-        std::cerr << "Error: Shader compilation failed\n" << infoLog << std::endl;
+Shader* shader_manager::get_shader(int shaderID) {
+    if (shaderID >= 0 && shaderID < shader_manager::getInstance().shaders.size()) {
+        return &shader_manager::getInstance().shaders[shaderID];
     }
-
-    shaders.push_back(basic_shader(shader_ID));
-    return shaders.size() - 1;
+    else {
+        std::cerr << "Invalid shader ID: " << shaderID << std::endl;
+        return nullptr;
+    }
 }
 
-void shader_manager::link(GLuint vertexShader, GLuint fragmentShader)
-{
-    program = glCreateProgram();
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-    glLinkProgram(program);
-
-    int success;
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-    if (!success) {
-        char infoLog[512];
-        glGetProgramInfoLog(program, 512, nullptr, infoLog);
-        std::cerr << "Error: Program linking failed\n" << infoLog << std::endl;
+void shader_manager::setUniform(const std::string& name, const glm::mat4& mat) {
+    Shader* shader = shader_manager::get_shader(shader_manager::getInstance().currentShaderID);
+    if (shader) {
+        Shader::setUniform(shader->getProgramID(), name, mat);
     }
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
 }
 
-/*
-void Shader::link(GLuint vertexShader, GLuint fragmentShader) {
-    program = glCreateProgram();
-    glAttachShader(program, vertexShader);
-    glAttachShader(program, fragmentShader);
-    glLinkProgram(program);
-
-    int success;
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-    if (!success) {
-        char infoLog[512];
-        glGetProgramInfoLog(program, 512, nullptr, infoLog);
-        std::cerr << "Error: Program linking failed\n" << infoLog << std::endl;
+void shader_manager::setUniform(const std::string& name, float value) {
+    Shader* shader = shader_manager::get_shader(shader_manager::getInstance().currentShaderID);
+    if (shader) {
+        Shader::setUniform(shader->getProgramID(), name, value);
     }
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
 }
 
-*/
-#endif
+shader_manager& shader_manager::getInstance() {
+    return master_shader_manager;
+}
+#endif // SHADER_MANAGER_H
+

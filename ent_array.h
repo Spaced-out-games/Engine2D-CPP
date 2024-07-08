@@ -37,14 +37,31 @@ public:
         }
         throw std::out_of_range("Invalid block index in handle");
     }
+    T get(int index) const
+    {
+        // Determine block ID and index within block
+        if (index < 0 || index >= size())
+        {
+            throw std::out_of_range("Index out of range");
+        }
+
+        int block_ID = index / 512;
+        int index_in_block = index % 512;
+
+        if (block_ID < blocks.size())
+        {
+            return blocks[block_ID].get(index_in_block);
+        }
+        throw std::out_of_range("Invalid block index");
+    }
 
     // Check if an entity is valid using an ent_handle
     bool is_valid(const ent_handle& handle) const
     {
         // Ensure the block index is valid
-        if (handle.block_index < blocks.size())
+        if (handle.block_ID < blocks.size())
         {
-            return blocks[handle.block_index].is_valid(handle);
+            return blocks[handle.block_ID].is_valid(handle);
         }
         return false; // Invalid block index
     }
@@ -204,6 +221,12 @@ public:
             }
         }
     }
+
+    T get_entity(bitset_size_t block_ID, bitset_size_t ent_index)
+    {
+        blocks
+    }
+
     
     void print_bitset(int index)
     {
