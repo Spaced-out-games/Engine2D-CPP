@@ -67,15 +67,68 @@ void main() {
 //void initSDL(SDL_Window** window, SDL_GLContext* context);
 //void initGL();
 
+struct shader
+{
+    // for now, everything is public
+    GLuint shaderProgram;
+    shader(const char* vertexShaderSource, const char* fragmentShaderSource) { shaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource); }
+
+    GLuint compileShader(GLenum shaderType, const char* shaderSource) {
+        GLuint shader = glCreateShader(shaderType);
+        glShaderSource(shader, 1, &shaderSource, nullptr);
+        glCompileShader(shader);
+
+        GLint success;
+        GLchar infoLog[512];
+        glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+        if (!success) {
+            glGetShaderInfoLog(shader, 512, nullptr, infoLog);
+            std::cerr << "Shader Compilation Error: " << infoLog << std::endl;
+        }
+
+        return shader;
+    }
+
+    // Function to create shader program
+    GLuint createShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource) {
+        GLuint vertexShader = compileShader(GL_VERTEX_SHADER, vertexShaderSource);
+        GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+
+        GLuint shaderProgram = glCreateProgram();
+        glAttachShader(shaderProgram, vertexShader);
+        glAttachShader(shaderProgram, fragmentShader);
+        glLinkProgram(shaderProgram);
+
+        GLint success;
+        GLchar infoLog[512];
+        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+        if (!success) {
+            glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
+            std::cerr << "Shader Program Linking Error: " << infoLog << std::endl;
+        }
+
+        glDeleteShader(vertexShader);
+        glDeleteShader(fragmentShader);
+
+        return shaderProgram;
+    }
+
+};
+
+
+
+
+
+
+
 // This works, do not fucking touch it, dumbass
 struct model
 {
     GLuint VBO, VAO, EBO;
     GLuint shaderProgram;
 
-    model(GLfloat* vertices, size_t vertices_size, GLuint* indices, size_t indices_size, GLuint shaderProgram)
-        : shaderProgram(shaderProgram)
-    {
+    model(GLfloat* vertices, size_t vertices_size, GLuint* indices, size_t indices_size, GLuint shaderProgram): shaderProgram(shaderProgram)
+{
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
 
@@ -113,45 +166,7 @@ struct model
     }
 };
 
-GLuint compileShader(GLenum shaderType, const char* shaderSource) {
-    GLuint shader = glCreateShader(shaderType);
-    glShaderSource(shader, 1, &shaderSource, nullptr);
-    glCompileShader(shader);
 
-    GLint success;
-    GLchar infoLog[512];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if (!success) {
-        glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-        std::cerr << "Shader Compilation Error: " << infoLog << std::endl;
-    }
-
-    return shader;
-}
-
-// Function to create shader program
-GLuint createShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource) {
-    GLuint vertexShader = compileShader(GL_VERTEX_SHADER, vertexShaderSource);
-    GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
-
-    GLuint m_shaderProgram = glCreateProgram();
-    glAttachShader(m_shaderProgram, vertexShader);
-    glAttachShader(m_shaderProgram, fragmentShader);
-    glLinkProgram(m_shaderProgram);
-
-    GLint success;
-    GLchar infoLog[512];
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
-        std::cerr << "Shader Program Linking Error: " << infoLog << std::endl;
-    }
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    return shaderProgram;
-}
 
 void render(model& m, glm::vec3 color, glm::mat4& transform) {
     
@@ -235,8 +250,8 @@ int main(int argc, char* argv[]) {
         0, 1, 2,
         2, 3, 0
     };
-    GLuint shaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource);
-    model rect(vertices, 12, indices, 6, shaderProgram);
+    shader shader_test(vertexShaderSource, fragmentShaderSource);
+    model rect(vertices, 12, indices, 6, shader_test.shaderProgram);
 
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(-0.5f, 0.5f, 0.0f));
@@ -246,7 +261,7 @@ int main(int argc, char* argv[]) {
     SDL_Event event;
     
 
-    rect.shaderProgram = shaderProgram;
+    //rect.shaderProgram = shaderProgram;
     while (!quit) {
         while (SDL_PollEvent(&event) != 0) {
             if (event.type == SDL_QUIT) {
