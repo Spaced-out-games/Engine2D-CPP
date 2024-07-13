@@ -1,20 +1,31 @@
 #pragma once
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
+#include <SDL.h>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <string>
 #include <cstdlib>
 #include "ent_manager.h"
 #include <iostream> // For std::cerr
-#include "test.h"
 #include "shader_manager.h"
+#include "global_uniforms.h"
+#include "Camera.h"
+#include "Mesh2D.h"
 
 #define compare_s(command, test) (strncmp(command, test, strlen(command)) == 0)
 
 typedef void* (*FunctionPointer)(void*);
 class CLArg;
 class Controller;
+
+void drawTriangleImmediateMode();
+void drawTriangle(SDL_Window* window);
+std::string readShaderFile(const std::string& filePath);
+GLuint compileShader(const std::string& source, GLenum shaderType);
+GLuint createShaderProgram(const std::string& vertexPath, const std::string& fragmentPath);
 
 class engineCore
 {
@@ -39,18 +50,17 @@ public:
     void disableVsync();
     bool isVsyncEnabled() const;
     void setWindowDimensions(int newWidth, int newHeight);
-    void registerController(Controller* controller);
-    static shader_manager& getShaderManager() { return shaderManager; }
+    //void registerController(Controller* controller);
     bool initialized() { return init_success; }
     SDL_Window* getWindow();
+    shader_manager shaderManager;
 protected:
     engineCore();
     virtual ~engineCore();
 private:
     friend CLArg;
-    static shader_manager shaderManager;
 
-    bool init_SDL();
+    void init_SDL();
 
     ent_manager EntityManager;
     SDL_Window* sdlWindow;
@@ -66,23 +76,24 @@ private:
     bool mFullscreen;
     std::string mTitle;
     Controller* controller;
-
     static engineCore* instance;
-
     static void parse_arg(char* arg, char* target_command, CLArg& CLArgument);
+    void setUniform(int s, const std::string& name, const glm::mat4& mat);
 };
 
 #include "CLArgument.h"
 #include "Controller.h"
 
 engineCore* engineCore::instance = nullptr;
-shader_manager engineCore::shaderManager = shader_manager::getInstance();
+//shader_manager* engineCore::shaderManager = shader_manager::getInstance();
 
 engineCore::engineCore()
-    : sdlWindow(nullptr), glContext(nullptr), mWidth(800), mHeight(600), deltaTime(0.0),
+    : sdlWindow(nullptr), mWidth(1400), mHeight(600), deltaTime(0.0),
     vsync_enabled(false), running(false), init_success(false), mFullscreen(false), mTitle("Engine"), controller(nullptr)
 {
- //   shaderManager = shader_manager::getInstance()
+    instance = this;
+
+
 }
 
 engineCore::~engineCore()
@@ -102,72 +113,55 @@ engineCore::~engineCore()
 
 
 
-bool engineCore::init_SDL()
-{
-    if (SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-        std::cerr << "Initialization failed: SDL_Error: " << SDL_GetError() << "\n";
-        return false;
+void engineCore::init_SDL() {
+    // Initialize SDL. In order
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        std::cerr << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
         exit(1);
     }
 
+    // Set OpenGL version (here we use OpenGL 3.3). In order
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    //SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    //SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);  // 4x MSAA
 
-    sdlWindow = SDL_CreateWindow(mTitle.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWidth, mHeight, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-    if (!sdlWindow)
-    {
-        std::cerr << "Window failed to initialize. Error code: " << SDL_GetError();
-        return false;
+    // in order
+    // Create SDL window
+    sdlWindow = SDL_CreateWindow("SDL OpenGL Rectangle",
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        800, 600,
+        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+
+    // Create an SDL window. In order
+    if (!sdlWindow) {
+        std::cerr << "Failed to create window: " << SDL_GetError() << std::endl;
         exit(1);
     }
 
+    // Create OpenGL context
     glContext = SDL_GL_CreateContext(sdlWindow);
-    if (!glContext)
-    {
-        std::cerr << "OpenGL context could not be created! SDL_Error: " << SDL_GetError() << std::endl;
-        return false;
+    if (!glContext) {
+        std::cerr << "Failed to create OpenGL context: " << SDL_GetError() << std::endl;
         exit(1);
     }
 
-    glewExperimental = GL_TRUE;
-    GLenum glewError = glewInit();
-    if (glewError != GLEW_OK)
-    {
-        std::cerr << "Error initializing GLEW! " << glewGetErrorString(glewError) << std::endl;
-        return false;
+    // Initialize GLEW. In order
+    glewExperimental = GL_TRUE; // Enable experimental features for core profile
+    GLenum err = glewInit();
+    if (err != GLEW_OK) {
+        std::cerr << "Failed to initialize GLEW: " << glewGetErrorString(err) << std::endl;
+        exit(1);
     }
-    /*glViewport(0, 0, mWidth, mHeight);
+    // Set the swap interval for the current OpenGL context. Present
+    SDL_GL_SetSwapInterval(1); // Enable vsync
 
-    // Enable depth testing
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-
-    // Enable blending
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    // Enable face culling
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CCW);
-
-    // Enable multisampling
-    glEnable(GL_MULTISAMPLE);
-    */
-    SDL_GL_SetSwapInterval(1);
     // Set the viewport
     glViewport(0, 0, 800, 600);
 
     // Set the clear color
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    return true;
 }
+
 
 void engineCore::quit()
 {
@@ -178,31 +172,51 @@ bool engineCore::isRunning()
 {
     return getEngineCore()->running;
 }
-
+// glClearColor(0, 1, 0, 255);
 void engineCore::graphics_tick()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
-    shaderManager.use(0);
-    // Draw everything
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     
+
+    SDL_GL_SwapWindow(sdlWindow);
 }
+/*
+
+void render(model& m, glm::vec3 color, glm::mat4& transform) {
+
+    glUseProgram(m.shaderProgram);
+
+    GLint colorLoc = glGetUniformLocation(m.shaderProgram, "color");
+    glUniform3f(colorLoc, color.r, color.g, color.b);
+
+    GLint transformLoc = glGetUniformLocation(m.shaderProgram, "transform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+
+    m.draw(transform);
+}
+
+*/
 
 void engineCore::IO_tick()
 {
+
     if (controller)
     {
-        controller->isPollingEvents = true;
-        while (SDL_PollEvent(&(controller->events)))
+        controller->enablePollingEvents();
+
+
+        
+        while (SDL_PollEvent(controller->events)) // This is where the fun happens
         {
             controller->inputEvent();
         }
-        controller->isPollingEvents = false;
+        controller->disablePollingEvents();
     }
     else
     {
         std::cerr << "ERROR: No controller connected! Using fallback option (basic Controller) \n";
-        Controller* c = new Controller();
-        controller = c;
+        controller = new Controller();;
     }
 }
 
@@ -210,8 +224,7 @@ void engineCore::phys_tick() {}
 
 void engineCore::bootstrap()
 {
-
-
+    //EntityManager
 }
 
 void engineCore::logic_tick()
@@ -221,25 +234,54 @@ void engineCore::logic_tick()
 
 int engineCore::main()
 {
-    //std::cout << test_mesh.VAO;
+
+    // last
     bootstrap();
+    GLfloat vertices[] = {
+0.0f, 0.0f,  // Bottom-left
+1.0f, 0.0f,  // Bottom-right
+1.0f, -1.0f, // Top-right
+0.0f, -1.0f  // Top-left
+    };
+
+    GLuint indices[] = {
+        0, 1, 2,  // First triangle
+        2, 3, 0   // Second triangle
+    };
+    Shader shader_test = Shader::getDefaultShader();
+
+
+    Mesh2D rect(vertices, 8, indices, 6);
+
+    glm::mat4 transform(1.0f);
+
+    glm::vec3 color(1.0, 0.0, 0.0);
+    
+    
+
     running = true;
     while (running)
     {
         // Maybe one thread for each?
         IO_tick();
         phys_tick();
-        graphics_tick();
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        shader_test.use();
+        Shader::setUniform("transform", transform);
+        Shader::setUniform("color", color);
+        rect.draw();
+        SDL_GL_SwapWindow(sdlWindow);
         logic_tick();
 
-        //SDL_GL_SwapWindow(sdlWindow);
         
+ 
     }
     return 0;
 }
 
 bool engineCore::init_core(int argc, char* argv[])
 {
+    // Simply creates an instance if it can
     if (instance == nullptr)
     {
         // Create an instance if we dont have one
@@ -255,17 +297,7 @@ bool engineCore::init_core(int argc, char* argv[])
                 argument.execute(instance);
             }
         }
-
-        //Try to initialize SDL
-        if (!instance->init_SDL())
-        {
-            delete instance; // Clean up the instance if SDL initialization fails
-            instance = nullptr;
-            return false;
-        }
-
-        // Let us know we successfully initialized the engine
-        instance->init_success = true;
+        instance->init_SDL();
         return true;
     }
     return false;
@@ -291,7 +323,6 @@ void engineCore::parse_arg(char* arg, char* target_command, CLArg& CLArgument)
             CLArgument.mCommand = target_command;
             CLArgument.mArgument = argument;
             return;
-            // CLArgument = CLArg(target_command, argument);
         }
     }
 }
@@ -340,14 +371,13 @@ void engineCore::setWindowDimensions(int newWidth, int newHeight)
     SDL_SetWindowSize(sdlWindow, mWidth, mHeight);
 }
 
-void engineCore::registerController(Controller* newController)
-{
-    controller = newController;
-}
+//void engineCore::registerController(Controller* newController)
+//{
+//    controller = newController;
+//}
 SDL_Window* engineCore::getWindow()
 {
     return sdlWindow;
 }
-
 
 

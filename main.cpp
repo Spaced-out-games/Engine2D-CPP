@@ -1,4 +1,4 @@
-#define DEMO_DEBUG
+//#define DEMO_DEBUG
 
 #ifndef DEMO_DEBUG
 #include "ent_manager.h"
@@ -41,79 +41,14 @@ int main(int argc, char* argv[]) {
 #include <vector>
 
 // Shader source code
-const char* vertexShaderSource = R"(
-#version 330 core
-layout(location = 0) in vec3 aPos;
-uniform mat4 transform;
-void main() {
-    gl_Position = transform * vec4(aPos, 1.0);
-}
-)";
 
-const char* fragmentShaderSource = R"(
-#version 330 core
-
-in vec3 vertexColor; // Input from vertex shader
-out vec4 FragColor;
-
-uniform vec3 color; // Color uniform
-
-void main() {
-    FragColor = vec4(color, 1.0); // Use the uniform color
-}
-)";
 
 // Function prototypes
 //void initSDL(SDL_Window** window, SDL_GLContext* context);
 //void initGL();
-
-struct shader
-{
-    // for now, everything is public
-    GLuint shaderProgram;
-    shader(const char* vertexShaderSource, const char* fragmentShaderSource) { shaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource); }
-
-    GLuint compileShader(GLenum shaderType, const char* shaderSource) {
-        GLuint shader = glCreateShader(shaderType);
-        glShaderSource(shader, 1, &shaderSource, nullptr);
-        glCompileShader(shader);
-
-        GLint success;
-        GLchar infoLog[512];
-        glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-        if (!success) {
-            glGetShaderInfoLog(shader, 512, nullptr, infoLog);
-            std::cerr << "Shader Compilation Error: " << infoLog << std::endl;
-        }
-
-        return shader;
-    }
-
-    // Function to create shader program
-    GLuint createShaderProgram(const char* vertexShaderSource, const char* fragmentShaderSource) {
-        GLuint vertexShader = compileShader(GL_VERTEX_SHADER, vertexShaderSource);
-        GLuint fragmentShader = compileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
-
-        GLuint shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
-        glLinkProgram(shaderProgram);
-
-        GLint success;
-        GLchar infoLog[512];
-        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-        if (!success) {
-            glGetProgramInfoLog(shaderProgram, 512, nullptr, infoLog);
-            std::cerr << "Shader Program Linking Error: " << infoLog << std::endl;
-        }
-
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
-
-        return shaderProgram;
-    }
-
-};
+//tets
+//#include "shader.h"
+#include "Mesh2D.h"
 
 
 
@@ -121,65 +56,11 @@ struct shader
 
 
 
-// This works, do not fucking touch it, dumbass
-struct model
-{
-    GLuint VBO, VAO, EBO;
-    GLuint shaderProgram;
-
-    model(GLfloat* vertices, size_t vertices_size, GLuint* indices, size_t indices_size, GLuint shaderProgram): shaderProgram(shaderProgram)
-{
-        glGenVertexArrays(1, &VAO);
-        glBindVertexArray(VAO);
-
-        glGenBuffers(1, &VBO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, vertices_size * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
-
-        glGenBuffers(1, &EBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size * sizeof(GLuint), indices, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-        glEnableVertexAttribArray(0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-    }
-
-    ~model()
-    {
-        glDeleteBuffers(1, &VBO);
-        glDeleteBuffers(1, &EBO);
-        glDeleteVertexArrays(1, &VAO);
-    }
-
-    void draw(glm::mat4& transform)
-    {
-        GLint transformLoc = glGetUniformLocation(shaderProgram, "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
-
-        glUseProgram(0);
-    }
-};
 
 
 
-void render(model& m, glm::vec3 color, glm::mat4& transform) {
-    
-    glUseProgram(m.shaderProgram);
 
-    GLint colorLoc = glGetUniformLocation(m.shaderProgram, "color");
-    glUniform3f(colorLoc, color.r, color.g, color.b);
-    
-    GLint transformLoc = glGetUniformLocation(m.shaderProgram, "transform");
-    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 
-    m.draw(transform);
-}
 
 void initSDL(SDL_Window** window, SDL_GLContext* context) {
     // Initialize SDL. In order
@@ -240,36 +121,54 @@ int main(int argc, char* argv[]) {
 
 
     GLfloat vertices[] = {
-        0.0f, 0.0f, 0.0f,
-        1.0f, 0.0f, 0.0f,
-        1.0f, -1.0f, 0.0f,
-        0.0f, -1.0f, 0.0f
+    0.0f, 0.0f,  // Bottom-left
+    1.0f, 0.0f,  // Bottom-right
+    1.0f, -1.0f, // Top-right
+    0.0f, -1.0f  // Top-left
     };
 
     GLuint indices[] = {
-        0, 1, 2,
-        2, 3, 0
+        0, 1, 2,  // First triangle
+        2, 3, 0   // Second triangle
     };
-    shader shader_test(vertexShaderSource, fragmentShaderSource);
-    model rect(vertices, 12, indices, 6, shader_test.shaderProgram);
+    Shader shader_test = Shader::getDefaultShader();
+
+
+    Mesh2D rect(vertices, 8, indices, 6);
 
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(-0.5f, 0.5f, 0.0f));
     transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 1.0f));
 
+
+
     bool quit = false;
     SDL_Event event;
-    
 
-    //rect.shaderProgram = shaderProgram;
+    float dt = 0.001f;
+    glm::vec3 velocity(0.0005f, 0.0001f, 0.0);
+    glm::mat4 transform2 = glm::mat4(1.0f);
+    transform2 = glm::scale(transform2, glm::vec3(0.1f, 0.1f, 0.1f));
+    //rect.ShaderProgram = ShaderProgram;
     while (!quit) {
         while (SDL_PollEvent(&event) != 0) {
             if (event.type == SDL_QUIT) {
                 quit = true;
             }
         }
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        shader_test.use();
+        Shader::setUniform("transform", transform);
+        Shader::setUniform("color", glm::vec3(1.0, 0.0, 0.0));
+        rect.draw();
+        transform2 = glm::rotate(transform2, glm::radians(dt), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform2 = glm::translate(transform2, velocity);
 
-        render(rect, glm::vec3(1.0, 0.0f, 0.0f), transform);
+        //shader_test.use();
+        Shader::setUniform("transform", transform2);
+        Shader::setUniform("color", glm::vec3(1.0, 2.0, 0.0));
+        rect.draw();
+
         SDL_GL_SwapWindow(window);
     }
 

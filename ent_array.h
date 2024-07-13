@@ -224,7 +224,7 @@ public:
 
     T get_entity(bitset_size_t block_ID, bitset_size_t ent_index)
     {
-        blocks
+       // blocks.at(block_ID).get(ent_index);
     }
 
     

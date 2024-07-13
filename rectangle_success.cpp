@@ -1,15 +1,15 @@
+/*
 #include <SDL.h>
 #include <GL/glew.h>
 #include <iostream>
 
 // Function prototypes
-void initSDL(SDL_Window** window, SDL_GLContext* context);
-void initGL();
+//initSDL(SDL_Window** window, SDL_GLContext* context);
 void render() {
-    // Clear the screen
+    // Clear the screen. Fine here
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // Define the rectangle vertices
+    // Define the rectangle vertices. Fine here, too
     GLfloat vertices[] = {
         -0.5f, -0.5f, 0.0f,
          0.5f, -0.5f, 0.0f,
@@ -17,18 +17,18 @@ void render() {
         -0.5f,  0.5f, 0.0f
     };
 
-    // Define the rectangle indices
+    // Define the rectangle indices. Fine here too
     GLuint indices[] = {
         0, 1, 2,
         2, 3, 0
     };
 
-    // Create and bind a Vertex Array Object (VAO)
+    // Create and bind a Vertex Array Object (VAO). Fine here
     GLuint VAO;
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
-    // Create and bind a Vertex Buffer Object (VBO)
+    // Create and bind a Vertex Buffer Object (VBO) Fine here
     GLuint VBO;
     glGenBuffers(1, &VBO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -58,11 +58,12 @@ void render() {
     glDeleteBuffers(1, &EBO);
     glDeleteVertexArrays(1, &VAO);
 }
-int main(int argc, char* argv[]) {
-    SDL_Window* window = nullptr;
-    SDL_GLContext context;
 
-    // Initialize SDL and OpenGL
+int main(int argc, char* argv[]) {
+    SDL_Window* window = nullptr; // in order
+    SDL_GLContext context; // in order
+
+    // Initialize SDL and OpenGL. Might have issues with the constructor of engineCore in init_core() before initSDL runs
     initSDL(&window, &context);
     initGL();
 
@@ -94,22 +95,25 @@ int main(int argc, char* argv[]) {
 }
 
 void initSDL(SDL_Window** window, SDL_GLContext* context) {
-    // Initialize SDL
+    // Initialize SDL. In order
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cerr << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
         exit(1);
     }
 
-    // Set OpenGL version (here we use OpenGL 3.3)
+    // Set OpenGL version (here we use OpenGL 3.3). In order
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
+    // in order
     // Create SDL window
     *window = SDL_CreateWindow("SDL OpenGL Rectangle",
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         800, 600,
         SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+
+    // Create an SDL window. In order
     if (!*window) {
         std::cerr << "Failed to create window: " << SDL_GetError() << std::endl;
         exit(1);
@@ -122,7 +126,7 @@ void initSDL(SDL_Window** window, SDL_GLContext* context) {
         exit(1);
     }
 
-    // Initialize GLEW
+    // Initialize GLEW. In order
     glewExperimental = GL_TRUE; // Enable experimental features for core profile
     GLenum err = glewInit();
     if (err != GLEW_OK) {
@@ -130,7 +134,7 @@ void initSDL(SDL_Window** window, SDL_GLContext* context) {
         exit(1);
     }
 
-    // Set the swap interval for the current OpenGL context
+    // Set the swap interval for the current OpenGL context. Present
     SDL_GL_SetSwapInterval(1); // Enable vsync
 }
 
@@ -141,3 +145,4 @@ void initGL() {
     // Set the clear color
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 }
+*/

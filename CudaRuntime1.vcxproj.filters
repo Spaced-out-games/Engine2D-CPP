@@ -1,127 +1,157 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="rectangle_success.cpp" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitset_512.h">
-      <Filter>entity_system</Filter>
+      <Filter>include\entity_system</Filter>
     </ClInclude>
     <ClInclude Include="ent_block.h">
-      <Filter>entity_system</Filter>
+      <Filter>include\entity_system</Filter>
     </ClInclude>
     <ClInclude Include="ent_handle.h">
-      <Filter>entity_system</Filter>
+      <Filter>include\entity_system</Filter>
     </ClInclude>
     <ClInclude Include="ent_array.h">
-      <Filter>entity_system</Filter>
+      <Filter>include\entity_system</Filter>
     </ClInclude>
     <ClInclude Include="ent_manager.h">
-      <Filter>entity_system</Filter>
+      <Filter>include\entity_system</Filter>
     </ClInclude>
     <ClInclude Include="ent_cleanup.h">
-      <Filter>entity_system</Filter>
+      <Filter>include\entity_system</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
-      <Filter>entity_system</Filter>
+      <Filter>include\entity_system</Filter>
     </ClInclude>
     <ClInclude Include="shader_manager.h">
-      <Filter>shader_system</Filter>
+      <Filter>include\shader_system</Filter>
     </ClInclude>
     <ClInclude Include="shader.h">
-      <Filter>shader_system</Filter>
+      <Filter>include\shader_system</Filter>
     </ClInclude>
     <ClInclude Include="file_utils.h">
-      <Filter>FileIO</Filter>
+      <Filter>include\FileIO</Filter>
     </ClInclude>
     <ClInclude Include="engineCore.h">
-      <Filter>Core</Filter>
+      <Filter>include\Core</Filter>
     </ClInclude>
     <ClInclude Include="hb.h">
-      <Filter>physics</Filter>
+      <Filter>include\physics</Filter>
     </ClInclude>
     <ClInclude Include="hb_manager.h">
-      <Filter>physics</Filter>
+      <Filter>include\physics</Filter>
     </ClInclude>
     <ClInclude Include="hb_grid2D.h">
-      <Filter>physics</Filter>
+      <Filter>include\physics</Filter>
     </ClInclude>
     <ClInclude Include="hb_grid3D.h">
-      <Filter>physics</Filter>
+      <Filter>include\physics</Filter>
     </ClInclude>
     <ClInclude Include="Controller.h">
-      <Filter>GameIO</Filter>
+      <Filter>include\GameIO</Filter>
     </ClInclude>
     <ClInclude Include="CLArgument.h">
-      <Filter>Core</Filter>
+      <Filter>include\Core</Filter>
     </ClInclude>
     <ClInclude Include="GUI_Node.h">
-      <Filter>GUI</Filter>
+      <Filter>include\GUI</Filter>
     </ClInclude>
     <ClInclude Include="basic_array.h">
-      <Filter>data_structures</Filter>
+      <Filter>include\data_structures</Filter>
     </ClInclude>
     <ClInclude Include="pair2D.h">
-      <Filter>GUI</Filter>
+      <Filter>include\GUI</Filter>
     </ClInclude>
     <ClInclude Include="GUIRect.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="test.h" />
-    <ClInclude Include="Mesh.h">
-      <Filter>Graphics\Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="MeshFactory.h">
-      <Filter>Graphics\Geometry</Filter>
+      <Filter>include\GUI</Filter>
     </ClInclude>
     <ClInclude Include="glm_utils.h">
-      <Filter>Graphics\Geometry</Filter>
+      <Filter>include\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="CoreTest.h">
-      <Filter>Core</Filter>
+      <Filter>include\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="global_uniforms.h">
+      <Filter>include\shader_system</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>include\CameraSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh2D.h">
+      <Filter>include\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh3D.h">
+      <Filter>include\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeEngine_CUDA.cuh">
+      <Filter>ComputeEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeEngine_SIMD_multithreaded.h">
+      <Filter>ComputeEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeEngine_SIMD.h">
+      <Filter>ComputeEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeEngine_multithreaded.h">
+      <Filter>ComputeEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeEngineFallback.h">
+      <Filter>ComputeEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="entity_system">
-      <UniqueIdentifier>{604400ea-33b9-4681-ab64-5a054ce803d6}</UniqueIdentifier>
+    <Filter Include="include">
+      <UniqueIdentifier>{6cb8240e-62ec-493d-8bde-7510741d2484}</UniqueIdentifier>
     </Filter>
-    <Filter Include="shader_system">
-      <UniqueIdentifier>{2bd8721c-7baf-4155-aabc-120cd24fbfee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="FileIO">
-      <UniqueIdentifier>{d1371336-2731-4c35-a8bb-60929ef74f6b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core">
-      <UniqueIdentifier>{d2206abb-5c90-4957-bd0b-3d3c5ff7006c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="physics">
+    <Filter Include="include\physics">
       <UniqueIdentifier>{5f994e85-ae96-4bc2-a233-f994b5aafadc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameIO">
-      <UniqueIdentifier>{59c3b2d2-5130-4fdf-9721-d39e42a95ea7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GUI">
+    <Filter Include="include\GUI">
       <UniqueIdentifier>{a0f283a9-3dba-4b0c-9cb8-8e6a634829f3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="data_structures">
-      <UniqueIdentifier>{ec8d1fbe-0f85-4acf-b73e-583c9d6c5546}</UniqueIdentifier>
+    <Filter Include="include\shader_system">
+      <UniqueIdentifier>{2bd8721c-7baf-4155-aabc-120cd24fbfee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Graphics">
-      <UniqueIdentifier>{018d9855-e037-41ba-be98-606602f2f220}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Graphics\Geometry">
+    <Filter Include="include\Geometry">
       <UniqueIdentifier>{2023fcf8-b23e-4207-a1e5-6bf6decb0cb9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Graphics\shaders">
+    <Filter Include="include\CameraSystem">
+      <UniqueIdentifier>{85c2abdd-ec76-4b21-842d-932948453efe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
       <UniqueIdentifier>{7c00b9b6-8e36-4c57-871b-290fff5d7c3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\GameIO">
+      <UniqueIdentifier>{59c3b2d2-5130-4fdf-9721-d39e42a95ea7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\FileIO">
+      <UniqueIdentifier>{d1371336-2731-4c35-a8bb-60929ef74f6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\entity_system">
+      <UniqueIdentifier>{604400ea-33b9-4681-ab64-5a054ce803d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\data_structures">
+      <UniqueIdentifier>{ec8d1fbe-0f85-4acf-b73e-583c9d6c5546}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Core">
+      <UniqueIdentifier>{d2206abb-5c90-4957-bd0b-3d3c5ff7006c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ComputeEngine">
+      <UniqueIdentifier>{1cc5bba6-2750-4b5f-a544-e14421cf15b0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="basic_shader.glsl">
-      <Filter>Graphics\shaders</Filter>
+      <Filter>shaders</Filter>
     </None>
-    <None Include="..\CudaRuntime1\frag.glsl" />
-    <None Include="..\CudaRuntime1\vtx.glsl" />
+    <None Include="..\CudaRuntime1\frag.glsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\CudaRuntime1\vtx.glsl">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

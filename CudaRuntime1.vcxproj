@@ -9,6 +9,10 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="x64-NOCUDA-Debug|x64">
+      <Configuration>x64-NOCUDA-Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -17,7 +21,13 @@
   <ItemGroup>
     <ClInclude Include="basic_array.h" />
     <ClInclude Include="bitset_512.h" />
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="CLArgument.h" />
+    <ClInclude Include="ComputeEngineFallback.h" />
+    <ClInclude Include="ComputeEngine_CUDA.cuh" />
+    <ClInclude Include="ComputeEngine_multithreaded.h" />
+    <ClInclude Include="ComputeEngine_SIMD.h" />
+    <ClInclude Include="ComputeEngine_SIMD_multithreaded.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="CoreTest.h" />
     <ClInclude Include="engineCore.h" />
@@ -29,18 +39,18 @@
     <ClInclude Include="ent_manager.h" />
     <ClInclude Include="file_utils.h" />
     <ClInclude Include="glm_utils.h" />
+    <ClInclude Include="global_uniforms.h" />
     <ClInclude Include="GUIRect.h" />
     <ClInclude Include="GUI_Node.h" />
     <ClInclude Include="hb_grid3D.h" />
     <ClInclude Include="hb_manager.h" />
     <ClInclude Include="hb.h" />
     <ClInclude Include="hb_grid2D.h" />
-    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh2D.h" />
+    <ClInclude Include="Mesh3D.h" />
     <ClInclude Include="pair2D.h" />
-    <ClInclude Include="MeshFactory.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="shader_manager.h" />
-    <ClInclude Include="test.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\CudaRuntime1\frag.glsl" />
@@ -60,6 +70,12 @@
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='x64-NOCUDA-Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
@@ -74,6 +90,9 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='x64-NOCUDA-Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -82,6 +101,11 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>D:\C++ Libraries\SDL2\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\C++ Libraries\SDL2\lib\x64;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='x64-NOCUDA-Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>D:\C++ Libraries\SDL2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\C++ Libraries\glew-2.2.0\lib\Release\x64;D:\C++ Libraries\SDL2\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -99,6 +123,25 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='x64-NOCUDA-Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>D:\C++ Libraries\glm-master\include;D:\C++ Libraries\glew-2.2.0\include;D:\C++ Libraries\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\C++ Libraries\glew-2.2.0\lib\Release\x64;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.22000.0\um\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+      <CudaRuntime>None</CudaRuntime>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
