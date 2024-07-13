@@ -153,15 +153,15 @@ GLuint createShaderProgram(const char* vertexShaderSource, const char* fragmentS
     return shaderProgram;
 }
 
-void render(model& m, GLuint shaderProgram, glm::vec3 color, glm::mat4& transform) {
-    glClear(GL_COLOR_BUFFER_BIT);
-    glUseProgram(shaderProgram);
-    GLint colorLoc = glGetUniformLocation(shaderProgram, "color");
+void render(model& m, glm::vec3 color, glm::mat4& transform) {
+    
+    glUseProgram(m.shaderProgram);
+
+    GLint colorLoc = glGetUniformLocation(m.shaderProgram, "color");
     glUniform3f(colorLoc, color.r, color.g, color.b);
     
-    GLint currentProgram;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
-    std::cout << currentProgram;
+    GLint transformLoc = glGetUniformLocation(m.shaderProgram, "transform");
+    glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 
     m.draw(transform);
 }
@@ -254,7 +254,7 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        render(rect, shaderProgram, glm::vec3(1.0, 0.0f, 0.0f), transform);
+        render(rect, glm::vec3(1.0, 0.0f, 0.0f), transform);
         SDL_GL_SwapWindow(window);
     }
 
