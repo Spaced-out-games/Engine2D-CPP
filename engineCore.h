@@ -1,7 +1,6 @@
 #pragma once
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
-#include <SDL.h>
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,6 +13,8 @@
 #include "global_uniforms.h"
 #include "Camera.h"
 #include "Mesh2D.h"
+#include "GUI_Node.h"
+
 
 #define compare_s(command, test) (strncmp(command, test, strlen(command)) == 0)
 
@@ -54,9 +55,11 @@ public:
     bool initialized() { return init_success; }
     SDL_Window* getWindow();
     shader_manager shaderManager;
+    Shader& getShader(size_t index) { return shaders[index]; }
 protected:
     engineCore();
     virtual ~engineCore();
+    std::vector <Shader> shaders;
 private:
     friend CLArg;
 
@@ -88,11 +91,11 @@ engineCore* engineCore::instance = nullptr;
 //shader_manager* engineCore::shaderManager = shader_manager::getInstance();
 
 engineCore::engineCore()
-    : sdlWindow(nullptr), mWidth(1400), mHeight(600), deltaTime(0.0),
+    : sdlWindow(nullptr), mWidth(1920), mHeight(1080), deltaTime(0.0),
     vsync_enabled(false), running(false), init_success(false), mFullscreen(false), mTitle("Engine"), controller(nullptr)
 {
     instance = this;
-
+    
 
 }
 
@@ -127,10 +130,10 @@ void engineCore::init_SDL() {
 
     // in order
     // Create SDL window
-    sdlWindow = SDL_CreateWindow("SDL OpenGL Rectangle",
+    sdlWindow = SDL_CreateWindow(mTitle.c_str(),
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        800, 600,
-        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+        mWidth, mHeight,
+        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
     // Create an SDL window. In order
     if (!sdlWindow) {
@@ -156,7 +159,7 @@ void engineCore::init_SDL() {
     SDL_GL_SetSwapInterval(1); // Enable vsync
 
     // Set the viewport
-    glViewport(0, 0, 800, 600);
+    glViewport(0, 0, mWidth, mHeight);
 
     // Set the clear color
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -172,14 +175,10 @@ bool engineCore::isRunning()
 {
     return getEngineCore()->running;
 }
-// glClearColor(0, 1, 0, 255);
+
 void engineCore::graphics_tick()
 {
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    
-
-    SDL_GL_SwapWindow(sdlWindow);
 }
 /*
 
@@ -207,7 +206,7 @@ void engineCore::IO_tick()
 
 
         
-        while (SDL_PollEvent(controller->events)) // This is where the fun happens
+        while (SDL_PollEvent(&controller->events)) // This is where the fun happens
         {
             controller->inputEvent();
         }
@@ -216,7 +215,7 @@ void engineCore::IO_tick()
     else
     {
         std::cerr << "ERROR: No controller connected! Using fallback option (basic Controller) \n";
-        controller = new Controller();;
+        controller = new Controller();
     }
 }
 
@@ -224,7 +223,7 @@ void engineCore::phys_tick() {}
 
 void engineCore::bootstrap()
 {
-    //EntityManager
+    controller = &Controller();
 }
 
 void engineCore::logic_tick()
@@ -237,40 +236,38 @@ int engineCore::main()
 
     // last
     bootstrap();
-    GLfloat vertices[] = {
-0.0f, 0.0f,  // Bottom-left
-1.0f, 0.0f,  // Bottom-right
-1.0f, -1.0f, // Top-right
-0.0f, -1.0f  // Top-left
-    };
 
-    GLuint indices[] = {
-        0, 1, 2,  // First triangle
-        2, 3, 0   // Second triangle
-    };
-    Shader shader_test = Shader::getDefaultShader();
+    //GUINode(glm::vec3 initial_translation, glm::vec3 initial_scale, glm::vec3 initial_color)
+    GUINode root(glm::vec3(0, 0, 0), glm::vec3(1, 1, 1), glm::vec3(1, 0, 0), 1);
+    GUINode child(glm::vec3(0.0, 0.0, 0), glm::vec3(0.5, 0.5, 0.5), glm::vec3(0, 1, 0), 1);
+    GUINode child2(glm::vec3(0.0, 0.0, 0), glm::vec3(0.25, 0.25, 0.25), glm::vec3(0, 0, 1), 0);
 
+    root.addChild(&child);
+    child.addChild(&child2);
 
-    Mesh2D rect(vertices, 8, indices, 6);
+    glm::vec3 velocity = { 0.000000,0.000000,0.000000 };
 
-    glm::mat4 transform(1.0f);
-
-    glm::vec3 color(1.0, 0.0, 0.0);
-    
-    
-
+    GUINode::init();
+    Shader::getDefaultShader().use();
+    float dy = 0.0f, dp = 0.0f;
     running = true;
     while (running)
     {
         // Maybe one thread for each?
-        IO_tick();
+        //IO_tick();
         phys_tick();
+        root.translation += velocity;
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        shader_test.use();
-        Shader::setUniform("transform", transform);
-        Shader::setUniform("color", color);
-        rect.draw();
+        //controller->camera.setRotation(dy, dp);
+        //controller->camera.updateUniforms();
+        root.draw();
+        root.rotation+= 0.02;
+        child.rotation += 0.002;
+        child2.rotation -= 0.002;
+
         SDL_GL_SwapWindow(sdlWindow);
+
         logic_tick();
 
         
