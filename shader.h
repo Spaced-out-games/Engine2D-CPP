@@ -97,13 +97,18 @@ struct Shader
         glUniform3f(uniformCode, vector3.x, vector3.y, vector3.z);
         #endif
     }
-    static Shader getDefaultShader() { static Shader DEFAULT_SHADER(DEFAULT_VTX_SHADER_SOURCE, DEFAULT_FRAG_SHADER_SOURCE); return DEFAULT_SHADER; }
+    static Shader getDefaultShader()
+    {
+        static Shader DEFAULT_SHADER(DEFAULT_VTX_SHADER_SOURCE, DEFAULT_FRAG_SHADER_SOURCE);
+        return DEFAULT_SHADER;
+    }
 
 private:
     static inline const char* DEFAULT_VTX_SHADER_SOURCE = R"(
     #version 330 core
     layout(location = 0) in vec3 aPos;
     uniform mat4 transform;
+
     void main() {
         gl_Position = transform * vec4(aPos, 1.0);
     }
