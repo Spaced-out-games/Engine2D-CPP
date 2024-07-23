@@ -28,13 +28,33 @@
 /// 6. Set any required uniforms.
 /// 7. Call <see cref="Draw"/> to render the mesh.
 /// </remarks>
+#pragma once
+#include <GL/glew.h>
+#include <glm/glm.hpp>
+#include "shader.h"
+#include "texture.h"
+
 struct Mesh2D {
     GLuint VBO;
     GLuint VAO;
     GLuint EBO;
-    Mesh2D(): VBO(0), VAO(0), EBO(0) {}
-    Mesh2D(GLfloat* vertices, size_t vertices_size, GLuint* indices, size_t indices_size)
-    {
+    Texture* texture; // Pointer to Texture
+    Shader* shader;
+
+    Mesh2D() : VBO(0), VAO(0), EBO(0), texture(nullptr), shader(nullptr) {}
+
+    Mesh2D(GLfloat* vertices, size_t vertices_size, GLuint* indices, size_t indices_size, Texture* tex = nullptr, Shader* shader = nullptr)
+        : texture(tex), shader(shader) {
+        init(vertices, vertices_size, indices, indices_size);
+    }
+
+    ~Mesh2D() {
+        glDeleteBuffers(1, &VBO);
+        glDeleteBuffers(1, &EBO);
+        glDeleteVertexArrays(1, &VAO);
+    }
+
+    void init(GLfloat* vertices, size_t vertices_size, GLuint* indices, size_t indices_size) {
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
 
@@ -46,30 +66,29 @@ struct Mesh2D {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size * sizeof(GLuint), indices, GL_STATIC_DRAW);
 
-        // Assuming 2D vertices with x and y coordinates
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+        // Positions
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
         glEnableVertexAttribArray(0);
+
+        // Texture Coords
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(1);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
     }
 
-    ~Mesh2D()
-    {
-        glDeleteBuffers(1, &VBO);
-        glDeleteBuffers(1, &EBO);
-        glDeleteVertexArrays(1, &VAO);
-    }
-
-    void draw()
-    {
+    void draw(const Shader& shader) {
+        if (texture) {
+            texture->bind(0); // Bind texture to unit 0
+            shader.use();
+            shader.setUniform("texture1", 0); // Set the texture uniform
+        }
 
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // Adjust count as necessary
         glBindVertexArray(0);
     }
-
-
 };
 
 #endif

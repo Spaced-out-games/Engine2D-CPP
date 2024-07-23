@@ -1,15 +1,20 @@
 #pragma once
-#include <GL/glew.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/type_ptr.hpp>
+#include <GL/glew.h>      // For OpenGL functions and types
+#include <glm/glm.hpp>    // For glm::vec3 and glm::mat4
+#include <glm/gtc/type_ptr.hpp> // For glm::value_ptr
 
 // Since you're going to need a shader, might as well include it.
 #ifndef SHADER_H
 #include "shader.h"
 #endif
+#ifndef TEXTURE_H
+#include "Texture.h"
+#endif
 
-#ifndef MESH2D_H
-#define MESH2D_H
+
+#ifndef MESH3D_H
+#define MESH3D_H
+
 /// <summary>
 /// Represents a 3D mesh for rendering with OpenGL.
 /// </summary>
@@ -25,22 +30,26 @@
 /// 6. Set any required uniforms.
 /// 7. Call <see cref="Draw"/> to render the mesh.
 /// </remarks>
-struct Mesh3D
-{
-    // Vertex buffer
+struct Mesh3D {
     GLuint VBO;
-
-    // Buffer that stores the state of the Mesh
     GLuint VAO;
-
-    // Index buffer
     GLuint EBO;
+    Texture* texture; // Pointer to Texture
 
-    // Pointer to the shader this Mesh is using
-    Shader* m_shader;
+    Mesh3D() : VBO(0), VAO(0), EBO(0), texture(nullptr) {}
 
-    Mesh3D(GLfloat* vertices, size_t vertices_size, GLuint* indices, size_t indices_size, Shader shader) : m_shader(shader)
-    {
+    Mesh3D(GLfloat* vertices, size_t vertices_size, GLuint* indices, size_t indices_size, Texture* tex = nullptr)
+        : texture(tex) {
+        init(vertices, vertices_size, indices, indices_size);
+    }
+
+    ~Mesh3D() {
+        glDeleteBuffers(1, &VBO);
+        glDeleteBuffers(1, &EBO);
+        glDeleteVertexArrays(1, &VAO);
+    }
+
+    void init(GLfloat* vertices, size_t vertices_size, GLuint* indices, size_t indices_size) {
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
 
@@ -52,29 +61,28 @@ struct Mesh3D
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size * sizeof(GLuint), indices, GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+        // Positions
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
         glEnableVertexAttribArray(0);
+
+        // Texture Coords
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(1);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
     }
 
-    ~Mesh3D()
-    {
-        glDeleteBuffers(1, &VBO);
-        glDeleteBuffers(1, &EBO);
-        glDeleteVertexArrays(1, &VAO);
-    }
+    void draw(const Shader& shader) {
+        if (texture) {
+            texture->bind(0); // Bind texture to unit 0
+            shader.use();
+            shader.setUniform("texture1", 0); // Set the texture uniform
+        }
 
-    void draw()//glm::mat4& transform)
-    {
         glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // Adjust count as necessary
         glBindVertexArray(0);
-
-        glUseProgram(0);
     }
-
 };
-
 #endif
