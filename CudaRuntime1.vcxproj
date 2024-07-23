@@ -23,11 +23,8 @@
     <ClInclude Include="bitset_512.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CLArgument.h" />
-    <ClInclude Include="ComputeEngineFallback.h" />
-    <ClInclude Include="ComputeEngine_CUDA.cuh" />
-    <ClInclude Include="ComputeEngine_multithreaded.h" />
-    <ClInclude Include="ComputeEngine_SIMD.h" />
-    <ClInclude Include="ComputeEngine_SIMD_multithreaded.h" />
+    <ClInclude Include="SIMD_float_128.h" />
+    <ClInclude Include="SIMD_float_256.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="CoreTest.h" />
     <ClInclude Include="engineCore.h" />
@@ -51,6 +48,8 @@
     <ClInclude Include="pair2D.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="shader_manager.h" />
+    <ClInclude Include="SIMD_float_512.h" />
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\CudaRuntime1\frag.glsl" />
@@ -114,6 +113,8 @@
       <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>D:\C++ Libraries\glm-master\include;D:\C++ Libraries\glew-2.2.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
