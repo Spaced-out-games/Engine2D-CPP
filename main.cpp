@@ -35,7 +35,6 @@ int main(int argc, char* argv[]) {
 #include "GUI_Node.h"
 #include "shader.h"
 #include "shader_manager.h"
-#include "CommandLineParser.h"
 using glm::vec3;
 using glm::mat4;
 
@@ -45,11 +44,6 @@ struct windowContent
     std::vector<std::string> argv;
     Shader shader;
 
-
-    // Constructor to initialize with argc and argv
-    windowContent(int argc, char* argv[])
-        : argv(argv, argv + argc) // Initialize vector with range from argv
-    {}
 
     // Default constructor
     windowContent() = default; // Use default constructor for the default case
@@ -89,8 +83,8 @@ void custom_tick(void* input)
 
 int main(int argc, char* argv[])
 {
-    Application<windowContent> app; // initializes SDL window & context
-    windowContent content(argc, argv); // Adds arguments to the state
+    Application<windowContent> app (argc, argv); // initializes SDL window & context
+    windowContent content; // Adds arguments to the state
     app.setCustomState(content); // assigns state
 
 
