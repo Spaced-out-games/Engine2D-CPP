@@ -1,4 +1,4 @@
-//#define DEMO_DEBUG
+#define DEMO_DEBUG
 
 #ifndef DEMO_DEBUG
 #include "ent_manager.h"
@@ -30,152 +30,93 @@ int main(int argc, char* argv[]) {
 
 #ifdef DEMO_DEBUG
 #define SDL_MAIN_HANDLED
-#include <SDL.h>
-#include <GL/glew.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
+
+#include "engineCore_uncoupled.h"
+#include "GUI_Node.h"
+#include "shader.h"
+#include "shader_manager.h"
+#include "CommandLineParser.h"
+using glm::vec3;
+using glm::mat4;
+
+struct windowContent
+{
+    std::vector<GUINode> nodes;
+    std::vector<std::string> argv;
+    Shader shader;
+
+
+    // Constructor to initialize with argc and argv
+    windowContent(int argc, char* argv[])
+        : argv(argv, argv + argc) // Initialize vector with range from argv
+    {}
+
+    // Default constructor
+    windowContent() = default; // Use default constructor for the default case
+};
+
+template <class state_t>
+void custom_bootstrap(void* input)
+{
+    // Cast to an application pointer
+    Application<state_t>* app = (Application<state_t>*)input;
+
+    // set the shader
+    app->getCustomState()->shader = (Shader::getDefaultShader());
+
+
+    // Create the geometry
+    GUINode::init();
+    app->getCustomState()->nodes.push_back(GUINode(vec3(0.0f,0.0f,0.0f),vec3(1.0f,1.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), 0));
+}
+
+
+template <class state_t>
+void custom_tick(void* input)
+{
+    // cast to application pointer
+    Application<state_t>* app = (Application<state_t>*)input;
+
+    // use the shader
+    app->getCustomState()->shader.use(); 
+
+    // draw the node
+    app->getCustomState()->nodes[0].draw();
+}
+
+
 #include <iostream>
-#include <fstream>
-#include <sstream>
-#include <vector>
 
-// Shader source code
-
-
-// Function prototypes
-//void initSDL(SDL_Window** window, SDL_GLContext* context);
-//void initGL();
-//tets
-//#include "shader.h"
-#include "Mesh2D.h"
+int main(int argc, char* argv[])
+{
+    Application<windowContent> app; // initializes SDL window & context
+    windowContent content(argc, argv); // Adds arguments to the state
+    app.setCustomState(content); // assigns state
 
 
 
+    // set but not call functions
+    app.set_bootstrap_function(custom_bootstrap<windowContent>);
+    app.set_tick_function(custom_tick<windowContent>);
 
-
-
-
-
-
-
-
-
-
-void initSDL(SDL_Window** window, SDL_GLContext* context) {
-    // Initialize SDL. In order
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        std::cerr << "Failed to initialize SDL: " << SDL_GetError() << std::endl;
-        exit(1);
-    }
-
-    // Set OpenGL version (here we use OpenGL 3.3). In order
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-    // in order
-    // Create SDL window
-    *window = SDL_CreateWindow("SDL OpenGL Rectangle",
-        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        800, 600,
-        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
-
-    // Create an SDL window. In order
-    if (!*window) {
-        std::cerr << "Failed to create window: " << SDL_GetError() << std::endl;
-        exit(1);
-    }
-
-    // Create OpenGL context
-    *context = SDL_GL_CreateContext(*window);
-    if (!*context) {
-        std::cerr << "Failed to create OpenGL context: " << SDL_GetError() << std::endl;
-        exit(1);
-    }
-
-    // Initialize GLEW. In order
-    glewExperimental = GL_TRUE; // Enable experimental features for core profile
-    GLenum err = glewInit();
-    if (err != GLEW_OK) {
-        std::cerr << "Failed to initialize GLEW: " << glewGetErrorString(err) << std::endl;
-        exit(1);
-    }
-
-    // Set the swap interval for the current OpenGL context. Present
-    SDL_GL_SetSwapInterval(1); // Enable vsync
+    // Run the main loop
+    app.run();
 }
 
-void initGL() {
-    // Set the viewport
-    glViewport(0, 0, 800, 600);
-
-    // Set the clear color
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-}
-int main(int argc, char* argv[]) {
-    SDL_Window* window = nullptr;
-    SDL_GLContext context;
-    initSDL(&window, &context);
-    initGL();
 
 
-    GLfloat vertices[] = {
-    0.0f, 0.0f,  // Bottom-left
-    1.0f, 0.0f,  // Bottom-right
-    1.0f, -1.0f, // Top-right
-    0.0f, -1.0f  // Top-left
-    };
+/*
+int main(int argc, char* argv[])
+{
+    CommandLineToken token = gen_token(argv[1]);
+    std::cout << token.content;
+    windowContent content;
+    Application<windowContent> app;
+    app.setCustomState(content);
+    app.set_bootstrap_function(custom_bootstrap<windowContent>);
+    app.set_tick_function(custom_tick<windowContent>);
 
-    GLuint indices[] = {
-        0, 1, 2,  // First triangle
-        2, 3, 0   // Second triangle
-    };
-    Shader shader_test = Shader::getDefaultShader();
+    app.run();
 
-
-    Mesh2D rect(vertices, 8, indices, 6);
-
-    glm::mat4 transform = glm::mat4(1.0f);
-    transform = glm::translate(transform, glm::vec3(-0.5f, 0.5f, 0.0f));
-    transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 1.0f));
-
-
-
-    bool quit = false;
-    SDL_Event event;
-
-    float dt = 0.001f;
-    glm::vec3 velocity(0.0005f, 0.0001f, 0.0);
-    glm::mat4 transform2 = glm::mat4(1.0f);
-    transform2 = glm::scale(transform2, glm::vec3(0.1f, 0.1f, 0.1f));
-    //rect.ShaderProgram = ShaderProgram;
-    while (!quit) {
-        while (SDL_PollEvent(&event) != 0) {
-            if (event.type == SDL_QUIT) {
-                quit = true;
-            }
-        }
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        shader_test.use();
-        Shader::setUniform("transform", transform);
-        Shader::setUniform("color", glm::vec3(1.0, 0.0, 0.0));
-        rect.draw();
-        transform2 = glm::rotate(transform2, glm::radians(dt), glm::vec3(0.0f, 0.0f, 1.0f));
-        transform2 = glm::translate(transform2, velocity);
-
-        //shader_test.use();
-        Shader::setUniform("transform", transform2);
-        Shader::setUniform("color", glm::vec3(1.0, 2.0, 0.0));
-        rect.draw();
-
-        SDL_GL_SwapWindow(window);
-    }
-
-    SDL_GL_DeleteContext(context);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-
-    return 0;
-}
+}*/
 #endif
