@@ -37,6 +37,9 @@ struct Mesh2D {
     GLuint VAO;
     GLuint EBO;
 
+    #ifdef _DEBUG
+    bool debug_print = true;
+    #endif
 
     Mesh2D() : VBO(0), VAO(0), EBO(0){}
 
@@ -82,11 +85,16 @@ struct Mesh2D {
     }
 
     void draw() {
-        #ifdef _DEBUG
-        std::cout << "7. Call Draw to render the mesh.\n";
-        #endif // _DEBUG
 
-        
+
+        #ifdef _DEBUG
+        if (debug_print)
+        {
+            std::cout << "7. Call Draw to render the mesh.\n";
+            debug_print = false;
+        }
+
+        #endif // DEBUG
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // Adjust count as necessary
