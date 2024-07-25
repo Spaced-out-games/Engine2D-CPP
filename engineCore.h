@@ -6,7 +6,7 @@
 #include <string>
 #include <cstdlib>
 #include <iostream> // For std::cerr
-
+#include "CommandLineParser.h"
 class Controller;
 
 template <class state_t>
@@ -15,7 +15,7 @@ class Application
 public:
     using app_callback = void (*)(void*);
 
-    Application();
+    Application(int argc, char** argv);
     ~Application();
 
     // Quits the application
@@ -71,13 +71,14 @@ private:
     std::string mTitle;
     Controller* controller;
     state_t custom_state;
+    std::shared_ptr<ASTNode> command_line_arguments;
 };
 
 // Implementation of the template functions
 #include "Controller.h"
 
 template <class state_t>
-Application<state_t>::Application() :
+Application<state_t>::Application(int argc, char** argv) :
     sdlWindow(nullptr),
     glContext(nullptr),
     mWidth(1920),
@@ -92,9 +93,18 @@ Application<state_t>::Application() :
     bootstrap(nullptr),
     tick(nullptr)
 {
+    std::vector<std::string> arguments (argv, argv + argc);
+    command_line_arguments = parse_command_line(arguments);
+
+
+
+
     #ifdef _DEBUG
     std::cout << "engineCore constructed\n";
     #endif
+    #ifdef _DEBUG
+    print_ast(command_line_arguments);
+    #endif // DEBUG
     init_SDL();
 }
 
@@ -229,9 +239,7 @@ int Application<state_t>::run()
 
         // Tick the engine, passing a pointer to the application
         tick(this);
-        #ifdef _DEBUG
-        std::cout << "engineCore tick\n";
-        #endif
+
         SDL_GL_SwapWindow(sdlWindow);
 
         // logic_tick();
