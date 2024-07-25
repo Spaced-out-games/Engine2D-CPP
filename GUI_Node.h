@@ -1,9 +1,13 @@
 #pragma once
 
 #ifndef MESH3D_H
-#include "Mesh3D.h"
+#include "Mesh2D.h"
 #endif
-#include "engineCore.h"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+//#include "engineCore.h"
 //class engineCore;
 // Have GUI_Nodes query a slot within an hb_manager upon construction. This allows all the hitboxes to be in parallel, which is good for performance
 
@@ -24,18 +28,22 @@ public:
     static void init()
     {
         GLfloat vertices[] = {
-            // Positions          // Texture Coords
-            0.5f,  0.5f, 1.0f, 1.0f,
-            0.5f, -0.5f, 1.0f, 0.0f,
-           -0.5f, -0.5f, 0.0f, 0.0f,
-           -0.5f,  0.5f, 0.0f, 1.0f
+            // Positions         
+            0.5f,  0.5f,
+            0.5f, -0.5f,
+           -0.5f, -0.5f,
+           -0.5f,  0.5f,
         };
 
         GLuint indices[] = {
             0, 1, 3,
             1, 2, 3
         };
+        #ifdef _DEBUG
+        std::cout << "3. Prepare your vertex data, which can involve loading from a file or creating in memory.\n";
+        #endif
         rectangle = new Mesh2D(vertices, 8, indices, 6);
+
     }
 
     GUINode()
@@ -78,12 +86,16 @@ public:
     {
         glm::mat4 transform = get_nested_transform();
         transform = glm::scale(transform, scale);
+        #ifdef _DEBUG
+        std::cout << "6. Set any required uniforms.";
+        #endif // DEBUG
+
         Shader::setUniform("transform", transform);
         Shader::setUniform("color", color);
         
 
 
-        rectangle->draw(engineCore::getEngineCore()->getShader(0));
+        rectangle->draw();
         for (size_t i = 0; i < occupied_slots; ++i)
         {
             if (children[i] != nullptr)
@@ -111,19 +123,6 @@ public:
     }
 };
 
-class Expression_Node : public GUINode
-{
-public:
-    Expression_Node(size_t max_children, const std::string& expression) : GUINode(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), max_children) { m_expression = expression; }
-    virtual void addChild(GUINode* new_child) override;
 
-    virtual std::string& gen_code()
-    {
-        
-        return m_expression;
-    }
-private:
-    std::string m_expression;
-};
 
 //class Function_Node
