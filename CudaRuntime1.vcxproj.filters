@@ -53,7 +53,7 @@
     <ClInclude Include="Controller.h">
       <Filter>include\GameIO</Filter>
     </ClInclude>
-    <ClInclude Include="CLArgument.h">
+    <ClInclude Include="CommandLineParser.h">
       <Filter>include\Core</Filter>
     </ClInclude>
     <ClInclude Include="GUI_Node.h">
@@ -86,21 +86,11 @@
     <ClInclude Include="Mesh3D.h">
       <Filter>include\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="ComputeEngine_CUDA.cuh">
-      <Filter>ComputeEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="ComputeEngine_SIMD_multithreaded.h">
-      <Filter>ComputeEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="ComputeEngine_SIMD.h">
-      <Filter>ComputeEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="ComputeEngine_multithreaded.h">
-      <Filter>ComputeEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="ComputeEngineFallback.h">
-      <Filter>ComputeEngine</Filter>
-    </ClInclude>
+    <ClInclude Include="engineCore_uncoupled.h" />
+    <ClInclude Include="SIMD_float_128.h" />
+    <ClInclude Include="SIMD_float_256.h" />
+    <ClInclude Include="SIMD_float_512.h" />
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">
