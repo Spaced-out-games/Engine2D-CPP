@@ -2,7 +2,6 @@
 #include <SDL.h>
 #include <iostream>
 #include "Camera.h"
-class engineCore;
 
 class Controller
 {
@@ -10,19 +9,17 @@ public:
     Controller();
     ~Controller();
     SDL_Event events;
-private:
 
     bool isPollingEvents;
 
-    friend engineCore;
 
     void inputEvent();
     void enablePollingEvents();
     void disablePollingEvents();
 
-    virtual void onQuit(SDL_Event event) { engineCore::quit(); };
-    virtual void onKeyDown(SDL_Event event) { };
-    virtual void onKeyUp(SDL_Event event) { };
+    virtual void onQuit(SDL_Event event) {};
+    virtual void onKeyDown(SDL_Event event) {};
+    virtual void onKeyUp(SDL_Event event) {};
     virtual void onMouseMove(SDL_Event event) { getNormalizedMousePos(); };
     virtual void onMouseButtonDown(SDL_Event event) {};
     virtual void onMouseButtonUp(SDL_Event event) { };
@@ -54,7 +51,6 @@ private:
     }
 };
 
-#include "engineCore.h"
 
 Controller::Controller() : isPollingEvents(false)
 {}
