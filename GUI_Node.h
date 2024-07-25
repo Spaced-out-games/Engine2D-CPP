@@ -24,6 +24,9 @@ public:
     glm::vec3 scale;
     glm::vec3 color;
     float rotation;
+    #ifdef _DEBUG
+    bool debug_print = true;
+    #endif
 
     static void init()
     {
@@ -87,7 +90,12 @@ public:
         glm::mat4 transform = get_nested_transform();
         transform = glm::scale(transform, scale);
         #ifdef _DEBUG
-        std::cout << "6. Set any required uniforms.";
+        if (debug_print)
+        {
+            std::cout << "6. Set any required uniforms.";
+            debug_print = false;
+        }
+        
         #endif // DEBUG
 
         Shader::setUniform("transform", transform);
