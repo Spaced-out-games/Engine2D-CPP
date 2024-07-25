@@ -22,7 +22,8 @@
     <ClInclude Include="basic_array.h" />
     <ClInclude Include="bitset_512.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="CLArgument.h" />
+    <ClInclude Include="CommandLineParser.h" />
+    <ClInclude Include="engineCore_uncoupled.h" />
     <ClInclude Include="SIMD_float_128.h" />
     <ClInclude Include="SIMD_float_256.h" />
     <ClInclude Include="Controller.h" />
