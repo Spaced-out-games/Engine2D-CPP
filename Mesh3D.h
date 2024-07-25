@@ -7,9 +7,7 @@
 #ifndef SHADER_H
 #include "shader.h"
 #endif
-#ifndef TEXTURE_H
-#include "Texture.h"
-#endif
+
 
 
 #ifndef MESH3D_H
@@ -34,12 +32,11 @@ struct Mesh3D {
     GLuint VBO;
     GLuint VAO;
     GLuint EBO;
-    Texture* texture; // Pointer to Texture
 
     Mesh3D() : VBO(0), VAO(0), EBO(0), texture(nullptr) {}
 
     Mesh3D(GLfloat* vertices, size_t vertices_size, GLuint* indices, size_t indices_size, Texture* tex = nullptr)
-        : texture(tex) {
+        :  {
         init(vertices, vertices_size, indices, indices_size);
     }
 
@@ -73,12 +70,8 @@ struct Mesh3D {
         glBindVertexArray(0);
     }
 
-    void draw(const Shader& shader) {
-        if (texture) {
-            texture->bind(0); // Bind texture to unit 0
-            shader.use();
-            shader.setUniform("texture1", 0); // Set the texture uniform
-        }
+    void draw() {
+
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // Adjust count as necessary
