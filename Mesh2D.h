@@ -19,7 +19,7 @@
 /// <remarks>
 /// To use Mesh3D:
 /// 1. Set up SDL and OpenGL context.
-/// 2. Create a shader either from a file or from source code.
+/// 2. Create a shader either from a file or from source code. //
 /// 3. Prepare your vertex data, which can involve loading from a file or creating in memory.
 /// 4. Pass the vertex data and shader to the Mesh3D constructor. The geometry will be set up at this point.
 ///
@@ -31,21 +31,19 @@
 #pragma once
 #include <GL/glew.h>
 #include <glm/glm.hpp>
-#include "shader.h"
-#include "texture.h"
 
 struct Mesh2D {
     GLuint VBO;
     GLuint VAO;
     GLuint EBO;
-    Texture* texture; // Pointer to Texture
-    Shader* shader;
 
-    Mesh2D() : VBO(0), VAO(0), EBO(0), texture(nullptr), shader(nullptr) {}
 
-    Mesh2D(GLfloat* vertices, size_t vertices_size, GLuint* indices, size_t indices_size, Texture* tex = nullptr, Shader* shader = nullptr)
-        : texture(tex), shader(shader) {
+    Mesh2D() : VBO(0), VAO(0), EBO(0){}
+
+    Mesh2D(GLfloat* vertices, size_t vertices_size, GLuint* indices, size_t indices_size)
+    {
         init(vertices, vertices_size, indices, indices_size);
+        
     }
 
     ~Mesh2D() {
@@ -55,6 +53,11 @@ struct Mesh2D {
     }
 
     void init(GLfloat* vertices, size_t vertices_size, GLuint* indices, size_t indices_size) {
+        #ifdef _DEBUG
+        std::cout << "4. Pass the vertex data and shader to the Mesh3D constructor.\n";
+        #endif // DEBUG
+
+        
         glGenVertexArrays(1, &VAO);
         glBindVertexArray(VAO);
 
@@ -67,23 +70,23 @@ struct Mesh2D {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size * sizeof(GLuint), indices, GL_STATIC_DRAW);
 
         // Positions
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
         glEnableVertexAttribArray(0);
 
         // Texture Coords
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
         glEnableVertexAttribArray(1);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
     }
 
-    void draw(const Shader& shader) {
-        if (texture) {
-            texture->bind(0); // Bind texture to unit 0
-            shader.use();
-            shader.setUniform("texture1", 0); // Set the texture uniform
-        }
+    void draw() {
+        #ifdef _DEBUG
+        std::cout << "7. Call Draw to render the mesh.\n";
+        #endif // _DEBUG
+
+        
 
         glBindVertexArray(VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // Adjust count as necessary
