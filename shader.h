@@ -8,7 +8,15 @@ struct Shader
 {
     // for now, everything is public
     GLuint ShaderProgram;
-    Shader(const char* vertexShaderSource, const char* fragmentShaderSource) { ShaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource); }
+    Shader() {
+        ShaderProgram = 0;
+        #ifdef _DEBUG
+        std::cout << "2. Create a shader either from a file or from source code. (Note: Constructed invalid shader)\n";
+
+        #endif // DEBUG
+
+    }
+    Shader(const char* vertexShaderSource, const char* fragmentShaderSource) { ShaderProgram = createShaderProgram(vertexShaderSource, fragmentShaderSource); std::cout << "2. Create a shader either from a file or from source code.\n"; }
 
     GLuint compileShader(GLenum ShaderType, const char* ShaderSource) {
         GLuint shader = glCreateShader(ShaderType);
@@ -52,6 +60,10 @@ struct Shader
 
     void use() const
     {
+        #ifdef DEBUG
+        std::cout << "5. Use the shader associated with this Mesh3D by calling glUseProgram with the shader's program ID.\n";
+        #endif // DEBUG
+
         glUseProgram(ShaderProgram);
     }
     static void setUniform(const char* uniform_ID, const glm::mat4& matrix4)
