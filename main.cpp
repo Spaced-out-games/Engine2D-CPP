@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
 #ifdef DEMO_DEBUG
 #define SDL_MAIN_HANDLED
 
-#include "engineCore_uncoupled.h"
+#include "engineCore.h"
 #include "GUI_Node.h"
 #include "shader.h"
 #include "shader_manager.h"
