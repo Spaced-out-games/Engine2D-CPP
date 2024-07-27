@@ -5,10 +5,10 @@
 #include <GL/glew.h>
 #include <string>
 #include <cstdlib>
-#include <iostream> // For std::cerr
+#include <iostream>
 #include "CommandLineParser.h"
-class Controller;
-
+#ifndef APPLICATION_H
+#define APPLICATION_H
 template <class state_t>
 class Application
 {
@@ -27,11 +27,7 @@ public:
     // Main run loop
     virtual int run();
 
-    // Different tick functions for various subsystems
-    virtual void graphics_tick();
-    virtual void phys_tick();
-    virtual void IO_tick();
-    virtual void logic_tick();
+
 
     // Getters
     SDL_GLContext& getContext();
@@ -43,7 +39,6 @@ public:
     void enable_vsync();
     void disable_vsync();
     void setWindowDimensions(int newWidth, int newHeight);
-    void setController(Controller* new_controller);
     void setCustomState(const state_t& state);
 
     void set_tick_function(app_callback func);
@@ -57,7 +52,6 @@ private:
 
     SDL_Window* sdlWindow;
     SDL_GLContext glContext;
-    SDL_Event sdlEvents;
     int mWidth;
     int mHeight;
     double deltaTime;
@@ -69,19 +63,18 @@ private:
     app_callback tick;
 
     std::string mTitle;
-    Controller* controller;
     state_t custom_state;
     std::shared_ptr<ASTNode> command_line_arguments;
 };
 
 // Implementation of the template functions
-#include "Controller.h"
+
 
 template <class state_t>
 Application<state_t>::Application(int argc, char** argv) :
     sdlWindow(nullptr),
     glContext(nullptr),
-    mWidth(1920),
+    mWidth(1000), // 1920
     mHeight(1080),
     deltaTime(0.0),
     vsync_enabled(false),
@@ -89,7 +82,6 @@ Application<state_t>::Application(int argc, char** argv) :
     init_success(false),
     mFullscreen(false),
     mTitle("Engine"),
-    controller(nullptr),
     bootstrap(nullptr),
     tick(nullptr)
 {
@@ -141,9 +133,13 @@ void Application<state_t>::init_SDL()
     // in order
     // Create SDL window
     sdlWindow = SDL_CreateWindow(mTitle.c_str(),
+        
         SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
         mWidth, mHeight,
         SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    #ifdef _DEBUG
+    SDL_SetWindowPosition(sdlWindow, 0, 0);
+    #endif
 
     // Create an SDL window. In order
     if (!sdlWindow) {
@@ -188,34 +184,6 @@ bool Application<state_t>::isRunning()
 {
     return running;
 }
-
-template <class state_t>
-void Application<state_t>::graphics_tick() {}
-
-template <class state_t>
-void Application<state_t>::phys_tick() {}
-
-template <class state_t>
-void Application<state_t>::IO_tick()
-{
-    if (controller)
-    {
-        controller->enablePollingEvents();
-        while (SDL_PollEvent(&controller->events)) // This is where the fun happens
-        {
-            controller->inputEvent();
-        }
-        controller->disablePollingEvents();
-    }
-    else
-    {
-        std::cerr << "ERROR: No controller connected! Using fallback option (basic Controller) \n";
-        controller = new Controller();
-    }
-}
-
-template <class state_t>
-void Application<state_t>::logic_tick() {}
 
 template <class state_t>
 int Application<state_t>::run()
@@ -288,11 +256,6 @@ SDL_Window* Application<state_t>::getWindow()
     return sdlWindow;
 }
 
-template <class state_t>
-void Application<state_t>::setController(Controller* new_controller)
-{
-    controller = new_controller;
-}
 
 template <class state_t>
 void Application<state_t>::setCustomState(const state_t& state)
@@ -332,3 +295,5 @@ void render(model& m, glm::vec3 color, glm::mat4& transform) {
 }
 
 */
+
+#endif
