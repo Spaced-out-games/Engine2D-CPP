@@ -17,6 +17,7 @@
 class GUINode
 {
 public:
+    bool colliding;
     GUINode* parent;
     GUINode** children; // Fixed-size array for children
     inline static Mesh2D* rectangle = nullptr;
@@ -53,7 +54,7 @@ public:
 
     GUINode()
         : parent(nullptr), children(nullptr), child_count(0), occupied_slots(0),
-        translation(0.0f, 0.0f, 0.0f), scale(1.0f, 1.0f, 1.0f), color(1.0f, 1.0f, 1.0f)
+        translation(0.0f, 0.0f, 0.0f), scale(1.0f, 1.0f, 1.0f), color(1.0f, 1.0f, 1.0f), swap_color(0.2, 0.2, 0.2), colliding (false)
     {
         rotation = 0.0f;
         children = new GUINode * [child_count];
@@ -64,8 +65,8 @@ public:
     }
 
     GUINode(glm::vec3 initial_translation, glm::vec3 initial_scale, glm::vec3 initial_color, size_t max_children)
-        : parent(nullptr), child_count(max_children), occupied_slots(0),
-        translation(initial_translation), scale(initial_scale), color(initial_color)
+        : parent(nullptr), child_count(max_children), occupied_slots(0), colliding(false),
+        translation(initial_translation), scale(initial_scale), color(initial_color), swap_color(0.2,0.2,0.2)
     {
         rotation = 0.0f;
         children = new GUINode * [child_count];
@@ -220,7 +221,15 @@ public:
         // Return nullptr if no collision is found
         return nullptr;
     }
+    void swapColor()
+    {
+        glm::vec3 tempcolor = color;
+        color = swap_color;
+        swap_color = tempcolor;
+        colliding = false;
+    }
     private:
+        glm::vec3 swap_color;
         inline bool isInBounds(const glm::vec2& position)
         {
             // Get the node's bounding box

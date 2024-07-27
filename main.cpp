@@ -40,21 +40,7 @@ int main(int argc, char* argv[]) {
 using glm::vec3;
 using glm::mat4;
 
-struct windowContent
-{
-    std::vector<GUINode> nodes;
-    size_t num_ticks;
-    Shader shader;
-    VEditorController<windowContent> controller;
-
-    windowContent()
-        : nodes(), shader(), controller(nullptr) // Initialize controller with app
-    {}
-    // Constructor that initializes all members
-    windowContent(Application<windowContent>* app)
-        : nodes(), shader(), controller(app) // Initialize controller with app
-    {}
-};
+#include "windowContent.h"
 
 template <class state_t>
 void custom_bootstrap(void* input)
@@ -69,6 +55,7 @@ void custom_bootstrap(void* input)
     // Create the geometry
     GUINode::init();
     app->getCustomState()->nodes.push_back(GUINode(vec3(0.0f,0.0f,0.0f),vec3(1.0f,1.0f, 1.0f), vec3(1.0f, 1.0f, 1.0f), 1));
+    
     app->getCustomState()->nodes[0].addChild(new GUINode(vec3(0.0f, 0.0f, 0.0f), vec3(0.5f, 0.5f, 0.5), vec3(0.0f, 1.0f, 1.0f), 1));
 }
 
@@ -83,7 +70,7 @@ void custom_tick(void* input)
     while (SDL_PollEvent(&(app->getCustomState()->controller.getEvents())))
     {
         app->getCustomState()->controller.enablePollingEvents();
-        app->getCustomState()->controller.inputEvent();
+        app->getCustomState()->controller.w();
         app->getCustomState()->controller.disablePollingEvents();
 
     };
@@ -108,8 +95,12 @@ void custom_tick(void* input)
     }
     if (collision)
     {
-        //std::cout << collision->occupied_slots;
-        //collision->onCollide(nullptr);
+        if (!collision->colliding) {
+            collision->swapColor();
+        }
+        collision->colliding = true;
+
+
     }
     app->getCustomState()->num_ticks++;
 }
