@@ -51,6 +51,7 @@
     <ClInclude Include="shader_manager.h" />
     <ClInclude Include="SIMD_float_512.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="windowContent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\CudaRuntime1\frag.glsl" />
