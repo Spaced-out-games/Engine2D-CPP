@@ -3,6 +3,9 @@
   <ItemGroup>
     <ClCompile Include="rectangle_success.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="VEditorController.h">
+      <Filter>include\GameIO</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitset_512.h">
@@ -35,7 +38,7 @@
     <ClInclude Include="file_utils.h">
       <Filter>include\FileIO</Filter>
     </ClInclude>
-    <ClInclude Include="engineCore.h">
+    <ClInclude Include="Application.h">
       <Filter>include\Core</Filter>
     </ClInclude>
     <ClInclude Include="hb.h">
@@ -86,7 +89,6 @@
     <ClInclude Include="Mesh3D.h">
       <Filter>include\Geometry</Filter>
     </ClInclude>
-    <ClInclude Include="engineCore_uncoupled.h" />
     <ClInclude Include="SIMD_float_128.h" />
     <ClInclude Include="SIMD_float_256.h" />
     <ClInclude Include="SIMD_float_512.h" />
