@@ -1,168 +1,154 @@
 #pragma once
 #include <SDL.h>
 #include <iostream>
-#include "Camera.h"
+#include <glm/glm.hpp>
 
+#ifndef CONTROLLER_H
+#define CONTROLLER_H
+
+template <class Pawn>
 class Controller
 {
 public:
-    Controller();
+    Controller(Pawn* pawn);
     ~Controller();
-    SDL_Event events;
-
-    bool isPollingEvents;
-
 
     void inputEvent();
     void enablePollingEvents();
     void disablePollingEvents();
+    SDL_Event& getEvents() { return events; }
 
     virtual void onQuit(SDL_Event event) {};
     virtual void onKeyDown(SDL_Event event) {};
     virtual void onKeyUp(SDL_Event event) {};
     virtual void onMouseMove(SDL_Event event) { getNormalizedMousePos(); };
     virtual void onMouseButtonDown(SDL_Event event) {};
-    virtual void onMouseButtonUp(SDL_Event event) { };
+    virtual void onMouseButtonUp(SDL_Event event) {};
     virtual void onMouseWheelMove(SDL_Event event) {};
-    virtual void onFileDrop(SDL_Event event) {  };
-    virtual void onTextDrop(SDL_Event event) {  };
-    virtual void onBeginDrop(SDL_Event event) { };
-    virtual void onEndDrop(SDL_Event event) {  };
-    virtual void onWindowResize(SDL_Event event){
+    virtual void onFileDrop(SDL_Event event) {};
+    virtual void onTextDrop(SDL_Event event) {};
+    virtual void onBeginDrop(SDL_Event event) {};
+    virtual void onEndDrop(SDL_Event event) {};
+    virtual void onWindowResize(SDL_Event event) {
         glViewport(0, 0, event.window.data1, event.window.data2);
+
+        // Update window widths and heights when the window is resized
+        windowWidth = static_cast<float>(event.window.data1);
+        windowHeight = static_cast<float>(event.window.data2);
+
     };
-    glm::vec2 getMousePosition() {
-        int x, y;
-        SDL_GetMouseState(&x, &y);
-        return glm::vec2(static_cast<float>(x), static_cast<float>(y));
-    }
 
-    glm::vec2 getNormalizedMousePos()
-    {
-        int width;
-        int height;
-        SDL_GetWindowSize(SDL_GL_GetCurrentWindow(), &width, &height);
-        glm::vec2 mousepos = getMousePosition() - glm::vec2(width / 2, height / 2);
-        mousepos = (mousepos / glm::vec2(width, height));
+    glm::vec2 getMousePosition();
+    // Returns mouse position in(-1.0 - 1.0) range in window space
+    glm::vec2 getNormalizedMousePos();
+    Pawn* getPawn() { return mPawn; }
 
-        //std::cout <<'(' << mousepos.x << ", " << mousepos.y << ")\t";
-
-        return mousepos;
-    }
+private:
+    // Using floats since they are more precise to scale
+    float windowWidth;
+    float windowHeight;
+    Pawn* mPawn;
+    bool isPollingEvents;
+    SDL_Event events;
 };
 
-
-Controller::Controller() : isPollingEvents(false)
-{}
-
-Controller::~Controller() {
-};
-
-void Controller::inputEvent()
+// Define the template member functions in the same header file
+template <class Pawn>
+Controller<Pawn>::Controller(Pawn* pawn) : isPollingEvents(false), mPawn(pawn)
 {
-    switch (events.type)
-    {
-    case SDL_QUIT:
-        onQuit(events);
-        break;
-    case SDL_KEYUP:
-        onKeyUp(events);
-        break;
-    case SDL_KEYDOWN:
-        onKeyDown(events);
-        break;
-    case SDL_MOUSEMOTION:
-        onMouseMove(events);
-        break;
-    case SDL_MOUSEBUTTONDOWN:
-        onMouseButtonDown(events);
-        break;
-    case SDL_MOUSEBUTTONUP:
-        onMouseButtonUp(events);
-        break;
-    case SDL_MOUSEWHEEL:
-        onMouseWheelMove(events);
-        break;
-    case SDL_DROPFILE:
-        onFileDrop(events);
-        break;
-    case SDL_DROPTEXT:
-        onTextDrop(events);
-        break;
-    case SDL_DROPBEGIN:
-        onBeginDrop(events);
-        break;
-    case SDL_DROPCOMPLETE:
-        onEndDrop(events);
-        break;
-    case SDL_APP_WILLENTERBACKGROUND:
-        std::cout << "App will enter background\n";
-        break;
-    case SDL_APP_DIDENTERBACKGROUND:
-        std::cout << "App entered background\n";
-        break;
-    case SDL_APP_WILLENTERFOREGROUND:
-        std::cout << "App will enter foreground\n";
-        break;
-    case SDL_APP_DIDENTERFOREGROUND:
-        std::cout << "App entered foreground\n";
-        break;
-    case SDL_WINDOWEVENT_RESIZED:
-        onWindowResize(events);
-        std::cout << "Window resized\n";
-    default:
-        break;
+    int w, h;
+    SDL_GetWindowSize(SDL_GL_GetCurrentWindow(), &w, &h);
+    windowWidth = static_cast<float>(w);
+    windowHeight = static_cast<float>(h);
+}
+
+template <class Pawn>
+Controller<Pawn>::~Controller() {}
+
+template <class Pawn>
+void Controller<Pawn>::inputEvent() {
+    while (SDL_PollEvent(&events)) {
+        if (!isPollingEvents) return;
+
+        switch (events.type) {
+        case SDL_QUIT:
+            onQuit(events);
+            break;
+        case SDL_KEYUP:
+            onKeyUp(events);
+            break;
+        case SDL_KEYDOWN:
+            onKeyDown(events);
+            break;
+        case SDL_MOUSEMOTION:
+            onMouseMove(events);
+            break;
+        case SDL_MOUSEBUTTONDOWN:
+            onMouseButtonDown(events);
+            break;
+        case SDL_MOUSEBUTTONUP:
+            onMouseButtonUp(events);
+            break;
+        case SDL_MOUSEWHEEL:
+            onMouseWheelMove(events);
+            break;
+        case SDL_DROPFILE:
+            onFileDrop(events);
+            break;
+        case SDL_DROPTEXT:
+            onTextDrop(events);
+            break;
+        case SDL_DROPBEGIN:
+            onBeginDrop(events);
+            break;
+        case SDL_DROPCOMPLETE:
+            onEndDrop(events);
+            break;
+        case SDL_APP_WILLENTERBACKGROUND:
+            std::cout << "App will enter background\n";
+            break;
+        case SDL_APP_DIDENTERBACKGROUND:
+            std::cout << "App entered background\n";
+            break;
+        case SDL_APP_WILLENTERFOREGROUND:
+            std::cout << "App will enter foreground\n";
+            break;
+        case SDL_APP_DIDENTERFOREGROUND:
+            std::cout << "App entered foreground\n";
+            break;
+        case SDL_WINDOWEVENT_RESIZED:
+            onWindowResize(events);
+            std::cout << "Window resized\n";
+            break;
+        default:
+            break;
+        }
     }
 }
 
-void Controller::enablePollingEvents()
-{
+template <class Pawn>
+void Controller<Pawn>::enablePollingEvents() {
     isPollingEvents = true;
 }
 
-void Controller::disablePollingEvents()
-{
+template <class Pawn>
+void Controller<Pawn>::disablePollingEvents() {
     isPollingEvents = false;
 }
-/*
 
-class CameraController : public Controller
-{
-public:
-    CameraController()
-        : camera(glm::vec3(0.0f, 0.0f, 3.0f)) // Initializing Camera with a default position
-    {
-        // Set initial projection matrix if needed
-        camera.setProjection(45.0f, 16.0f / 9.0f, 0.1f, 100.0f);
-        camera.setRotation(0.0f, glm::radians(-90.0f));
-        //camera.setUniformLocations(shaderProgramID); // You need to set shaderProgramID
-    }
+template <class Pawn>
+glm::vec2 Controller<Pawn>::getMousePosition() {
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    return glm::vec2(static_cast<float>(x), static_cast<float>(y));
+}
+template <class Pawn>
+glm::vec2 Controller<Pawn>::getNormalizedMousePos() {
 
-    void onKeyDown(SDL_Event event) override
-    {
-        if (event.key.keysym.sym == SDLK_d) {
-            camera.setPosition(camera.getPosition() + camera.getRight() * cameraSpeed);
-        }
-        if (event.key.keysym.sym == SDLK_a) {
-            camera.setPosition(camera.getPosition() - camera.getRight() * cameraSpeed);
-        }
-        if (event.key.keysym.sym == SDLK_w) {
-            camera.setPosition(camera.getPosition() + camera.getFront() * cameraSpeed);
-        }
-        if (event.key.keysym.sym == SDLK_s) {
-            camera.setPosition(camera.getPosition() - camera.getFront() * cameraSpeed);
-        }
-    }
 
-    void updateCamera()
-    {
-        camera.updateUniforms();
-    }
-    Camera camera;
-private:
-    
-    float cameraSpeed = 0.05f; // Adjust speed as needed
-    GLuint shaderProgramID; // Set this to the actual shader program ID
-};
+    glm::vec2 mousepos = (getMousePosition() - glm::vec2(windowWidth / 2, windowHeight / 2));
+    mousepos = (mousepos / glm::vec2(windowWidth / 2, windowHeight / 2));
+    return mousepos;
+}
 
-*/
+#endif
