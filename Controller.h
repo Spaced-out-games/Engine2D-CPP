@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <iostream>
 #include <glm/glm.hpp>
+#include "GL\glew.h"
 
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
@@ -11,6 +12,7 @@ class Controller
 {
 public:
     Controller(Pawn* pawn);
+    Controller();
     ~Controller();
 
     void inputEvent();
@@ -37,6 +39,8 @@ public:
         windowHeight = static_cast<float>(event.window.data2);
 
     };
+    SDL_Event events;
+
 
     glm::vec2 getMousePosition();
     // Returns mouse position in(-1.0 - 1.0) range in window space
@@ -49,7 +53,6 @@ private:
     float windowHeight;
     Pawn* mPawn;
     bool isPollingEvents;
-    SDL_Event events;
 };
 
 // Define the template member functions in the same header file

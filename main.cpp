@@ -39,14 +39,14 @@ int main(int argc, char* argv[]) {
 #include "VEditorController.h"
 using glm::vec3;
 using glm::mat4;
-
 #include "windowContent.h"
 
-template <class state_t>
+//#include "windowContent.h"
+
 void custom_bootstrap(void* input)
 {
     // Cast to an application pointer
-    Application<state_t>* app = (Application<state_t>*)input;
+    Application<windowContent>* app = (Application<windowContent>*)input;
 
     // set the shader
     app->getCustomState()->shader = (Shader::getDefaultShader());
@@ -60,19 +60,24 @@ void custom_bootstrap(void* input)
 }
 
 
-template <class state_t>
 void custom_tick(void* input)
 {
-    
 
     // cast to application pointer
-    Application<state_t>* app = (Application<state_t>*)input;
-    while (SDL_PollEvent(&(app->getCustomState()->controller.getEvents())))
-    {
-        app->getCustomState()->controller.enablePollingEvents();
-        app->getCustomState()->controller.w();
-        app->getCustomState()->controller.disablePollingEvents();
+    Application<windowContent>* app = (Application<windowContent>*)input;
 
+    auto a = app->getCustomState()->controller;
+
+
+    while (
+            SDL_PollEvent(
+                nullptr
+            )
+        )
+    {
+        app->getCustomState()->controller->enablePollingEvents();
+        app->getCustomState()->controller->inputEvent();
+        app->getCustomState()->controller->disablePollingEvents();
     };
 
     // use the shader
@@ -81,32 +86,31 @@ void custom_tick(void* input)
     // draw the node
     app->getCustomState()->nodes[0].draw();
 
-    glm::vec2 mouse_position = app->getCustomState()->controller.getNormalizedMousePos();
+    glm::vec2 mouse_position = app->getCustomState()->controller->getNormalizedMousePos();
     glm::vec3 root_scale = app->getCustomState()->nodes[0].scaleFromMatrix(app->getCustomState()->nodes[0].get_nested_transform());
     glm::vec3 child_scale = app->getCustomState()->nodes[0].children[0]->scaleFromMatrix(app->getCustomState()->nodes[0].children[0]->get_nested_transform());
-    
-    //std::cout << "Scale: " << child_scale.x << ", " << child_scale.y << ", " << child_scale.z << std::endl;
+   
 
-    auto collision = app->getCustomState()->nodes[0].collides(mouse_position);
-    if (app->getCustomState()->num_ticks % 1000 == 0)
+    //auto collision = app->getCustomState()->nodes[0].collides(mouse_position);
+
+    if ((app->getCustomState()->num_ticks % 1000) == 0)
     {
-        std::cout << collision << '\n';
+        //std::cout << "app:\t\t" << app->getCustomState() << '\n';
 
     }
-    if (collision)
-    {
-        if (!collision->colliding) {
-            collision->swapColor();
-        }
-        collision->colliding = true;
 
-
-    }
     app->getCustomState()->num_ticks++;
 }
 
 void collision_check(windowContent& content)
 {
+    // Have the controller call this onMouseMove
+    // Also assign last_node and current_node onMouseButtonDown & onMouseButtonUp
+
+    // Here, scan through each root node in the scene
+    std::cout << "@collision check.\n";
+
+
 }
 
 
@@ -116,15 +120,16 @@ int main(int argc, char* argv[])
 {
     Application<windowContent> app (argc, argv); // initializes SDL window & context
     
-    
+
 
     // Initialize windowContent with the Application instance
-    windowContent content(&app);
+    windowContent content;
     app.setCustomState(content); // assigns state
+    //app.getCustomState()->controller->owner = &app;
 
     // set but not call functions
-    app.set_bootstrap_function(custom_bootstrap<windowContent>);
-    app.set_tick_function(custom_tick<windowContent>);
+    app.set_bootstrap_function(custom_bootstrap);
+    app.set_tick_function(custom_tick);
 
     // Run the main loop
     app.run();

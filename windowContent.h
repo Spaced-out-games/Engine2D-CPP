@@ -1,19 +1,38 @@
-#ifndef WINDOW_CONTENT_H
-#define WINDOW_CONTENT_H
+#pragma once
+
+#include <vector>
+#include "GUI_Node.h"
+#include "Application.h"
+#include "Shader.h"
+
+
+//class VEditorController;
+
+// Forward declaration if needed
+// class Application;
+
 struct windowContent
 {
     std::vector<GUINode> nodes;
     size_t num_ticks;
     Shader shader;
     GUINode* last_node;
-    VEditorController<windowContent> controller;
+    GUINode* current_node;
+    VEditorController* controller;
 
-    windowContent()
-        : nodes(), shader(), controller(nullptr), last_node(nullptr) // Initialize controller with app
-    {}
+    // Default constructor
+    windowContent();
+
     // Constructor that initializes all members
-    windowContent(Application<windowContent>* app)
-        : nodes(), shader(), controller(app), last_node(nullptr) // Initialize controller with app
+    windowContent(VEditorController* controller)
+        : nodes(), shader(), controller(controller), last_node(nullptr), current_node(nullptr)
     {}
 };
-#endif
+
+#include "VEditorController.h"
+
+windowContent::windowContent()
+    : nodes(), shader(), controller(nullptr), last_node(nullptr), current_node(nullptr)
+{
+    controller = new VEditorController();
+}

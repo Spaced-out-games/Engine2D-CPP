@@ -6,7 +6,7 @@
 #include <string>
 #include <cstdlib>
 #include <iostream>
-#include "CommandLineParser.h"
+//#include "CommandLineParser.h"
 #ifndef APPLICATION_H
 #define APPLICATION_H
 template <class state_t>
@@ -64,7 +64,7 @@ private:
 
     std::string mTitle;
     state_t custom_state;
-    std::shared_ptr<ASTNode> command_line_arguments;
+    //std::shared_ptr<ASTNode> command_line_arguments;
 };
 
 // Implementation of the template functions
@@ -86,7 +86,7 @@ Application<state_t>::Application(int argc, char** argv) :
     tick(nullptr)
 {
     std::vector<std::string> arguments (argv, argv + argc);
-    command_line_arguments = parse_command_line(arguments);
+    //command_line_arguments = parse_command_line(arguments);
 
 
 
@@ -95,7 +95,7 @@ Application<state_t>::Application(int argc, char** argv) :
     std::cout << "engineCore constructed\n";
     #endif
     #ifdef _DEBUG
-    print_ast(command_line_arguments);
+    //print_ast(command_line_arguments);
     #endif // DEBUG
     init_SDL();
 }

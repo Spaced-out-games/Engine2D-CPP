@@ -4,6 +4,8 @@
 #include <memory>
 #include <iostream> // For std::cerr
 #include <cctype>   // For std::isdigit
+#ifndef CLPARSER_H
+#define CLPARSER_H
 
 // Enum for token types
 enum command_line_token_t
@@ -166,3 +168,5 @@ void print_ast(const std::shared_ptr<ASTNode>& node, int depth = 0)
         print_ast(child, depth + 1);
     }
 }
+
+#endif

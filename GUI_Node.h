@@ -208,19 +208,23 @@ public:
                 if (children[i] != nullptr)
                 {
                     // Check if the child node collides with the mouse position
-                    if (children[i]->isInBounds(mousePos))
+                    GUINode* result = children[i]->collides(mousePos);
+                    if (result != nullptr)
                     {
-                        // If it does, return the child node
-                        return children[i];
+                        // If a child node collides, return it
+                        return result;
                     }
                 }
             }
+
+            // If no child node collides, return this node
             return this;
         }
 
-        // Return nullptr if no collision is found
+        // Return nullptr if this node does not collide with the mouse position
         return nullptr;
     }
+
     void swapColor()
     {
         glm::vec3 tempcolor = color;
@@ -243,6 +247,3 @@ public:
         }
 };
 
-
-
-//class Function_Node
