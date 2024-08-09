@@ -44,12 +44,11 @@
     <ClInclude Include="hb_manager.h" />
     <ClInclude Include="hb.h" />
     <ClInclude Include="hb_grid2D.h" />
-    <ClInclude Include="Mesh2D.h" />
-    <ClInclude Include="Mesh3D.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="shader_manager.h" />
     <ClInclude Include="SIMD_float_512.h" />
-    <ClInclude Include="static_mesh_2D.h" />
+    <ClInclude Include="Shape.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="vArray.h" />
     <ClInclude Include="vBuffer.h" />

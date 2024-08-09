@@ -12,7 +12,7 @@
 
 
 // Define the Mesh2D instance
-typedef Mesh2D<GL_STATIC_DRAW, GL_TRIANGLES> StaticMesh2D;
+typedef Mesh<GL_STATIC_DRAW, GL_TRIANGLES> StaticMesh2D;
 
 struct windowContent
 {
