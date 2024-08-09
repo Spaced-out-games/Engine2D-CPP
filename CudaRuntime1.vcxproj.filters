@@ -59,17 +59,8 @@
     <ClInclude Include="CommandLineParser.h">
       <Filter>include\Core</Filter>
     </ClInclude>
-    <ClInclude Include="GUI_Node.h">
-      <Filter>include\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="basic_array.h">
       <Filter>include\data_structures</Filter>
-    </ClInclude>
-    <ClInclude Include="pair2D.h">
-      <Filter>include\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUIRect.h">
-      <Filter>include\GUI</Filter>
     </ClInclude>
     <ClInclude Include="glm_utils.h">
       <Filter>include\Geometry</Filter>
@@ -83,16 +74,27 @@
     <ClInclude Include="Camera.h">
       <Filter>include\CameraSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh2D.h">
-      <Filter>include\Geometry</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh3D.h">
+    <ClInclude Include="Mesh.h">
       <Filter>include\Geometry</Filter>
     </ClInclude>
     <ClInclude Include="SIMD_float_128.h" />
     <ClInclude Include="SIMD_float_256.h" />
     <ClInclude Include="SIMD_float_512.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="windowContent.h" />
+    <ClInclude Include="vBuffer.h">
+      <Filter>include\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="eBuffer.h">
+      <Filter>include\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Shape.h">
+      <Filter>include\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="vArray.h">
+      <Filter>include\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="debug_utils.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="include">
