@@ -1,105 +1,110 @@
 #pragma once
-#include <GL/glew.h>      // For OpenGL functions and types
-#include <glm/glm.hpp>    // For glm::vec3 and glm::mat4
-#include <glm/gtc/type_ptr.hpp> // For glm::value_ptr
+#include <GL/glew.h>
+#include <iostream>
+#include "eBuffer.h"
+#include "vBuffer.h"
+#include "vArray.h"
 
-
-// Since you're going to need a shader, might as well include it.
-#ifndef SHADER_H
-#include "shader.h"
-#endif
-
-
+#include "debug_utils.h"
+/**
+To use Mesh2D:
+1. Set up SDL and OpenGL context.
+2. Create a shader either from a file or from source code. //
+3. Prepare your vertex data, which can involve loading from a file or creating in memory.
+4. Pass the vertex data and shader to the Mesh3D constructor. The geometry will be set up at this point.
+To draw:
+5. Use the shader associated with this Mesh3D by calling <see cref="glUseProgram"/> with the shader's program ID.
+6. Set any required uniforms.
+7. Call draw() to render the mesh.
+*/
 #ifndef MESH2D_H
 #define MESH2D_H
 
-/// <summary>
-/// Represents a 2D mesh for rendering with OpenGL.
-/// </summary>
-/// <remarks>
-/// To use Mesh3D:
-/// 1. Set up SDL and OpenGL context.
-/// 2. Create a shader either from a file or from source code. //
-/// 3. Prepare your vertex data, which can involve loading from a file or creating in memory.
-/// 4. Pass the vertex data and shader to the Mesh3D constructor. The geometry will be set up at this point.
-///
-/// To draw:
-/// 5. Use the shader associated with this Mesh3D by calling <see cref="glUseProgram"/> with the shader's program ID.
-/// 6. Set any required uniforms.
-/// 7. Call <see cref="Draw"/> to render the mesh.
-/// </remarks>
+/**
+ * Mesh2D handles 2D mesh rendering. Assumes each vertex has 2 components (for positions).
+ */
+
 #pragma once
 #include <GL/glew.h>
-#include <glm/glm.hpp>
+#include <iostream>
+#include "vArray.h"  // Make sure to include the VertexArray class
+#include "vBuffer.h"
+#include "eBuffer.h"
 
-struct Mesh2D {
-    GLuint VBO;
-    GLuint VAO;
-    GLuint EBO;
+ /**
+  * Mesh2D handles 2D mesh rendering. Assumes each vertex has 2 components (for positions).
+  */
+template <GLenum DrawingType, GLenum PrimitiveType>
+class Mesh2D {
+public:
+    vArray VAO;  // Use VertexArray class to manage VAO
+    vBuffer<GLfloat, 2, DrawingType> VBO; // Vertex size is fixed to 2 (x, y)
+    eBuffer<GLuint, DrawingType, PrimitiveType> EBO;
 
-    #ifdef _DEBUG
-    bool debug_print = true;
-    #endif
+    Mesh2D() {}
 
-    Mesh2D() : VBO(0), VAO(0), EBO(0){}
-
-    Mesh2D(GLfloat* vertices, size_t vertices_size, GLuint* indices, size_t indices_size)
-    {
-        init(vertices, vertices_size, indices, indices_size);
+    Mesh2D(const GLfloat* vertices, size_t vertex_count, const GLuint* indices, size_t index_count)
+        : VBO(), EBO() {
+        init(vertices, vertex_count, indices, index_count);
         
+
     }
 
     ~Mesh2D() {
-        glDeleteBuffers(1, &VBO);
-        glDeleteBuffers(1, &EBO);
-        glDeleteVertexArrays(1, &VAO);
+        // VertexArray destructor will handle VAO cleanup
     }
 
-    void init(GLfloat* vertices, size_t vertices_size, GLuint* indices, size_t indices_size) {
+    void init(const GLfloat* vertices, size_t vertex_count, const GLuint* indices, size_t index_count) {
+
         #ifdef _DEBUG
-        std::cout << "4. Pass the vertex data and shader to the Mesh3D constructor.\n";
-        #endif // DEBUG
+        std::cout << "4. Pass the vertex data and shader to the Mesh2D constructor. The geometry will be set up at this point\n";
+        #endif
 
+        VAO.init();
+        VAO.bind();
+
+        VBO.init(vertices, vertex_count);
+        VBO.bind();
+
+        EBO.init(indices, index_count);
+        EBO.bind();
+
+        printStatus();
         
-        glGenVertexArrays(1, &VAO);
-        glBindVertexArray(VAO);
-
-        glGenBuffers(1, &VBO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, vertices_size * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
-
-        glGenBuffers(1, &EBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size * sizeof(GLuint), indices, GL_STATIC_DRAW);
-
-        // Positions
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)0); // Assuming 2 components per vertex
         glEnableVertexAttribArray(0);
 
-        // Texture Coords
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), (GLvoid*)(2 * sizeof(GLfloat)));
-        glEnableVertexAttribArray(1);
 
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
+
+
+    }
+
+    void printStatus()
+    {
+        std::cout << "vao: " << VAO.getID() << '\n';
+        std::cout << "vbo: " << VBO.getID() << '\n';
+        std::cout << "ebo: " << EBO.getID() << '\n';
+
     }
 
     void draw() {
-
-
+        printStatus();
         #ifdef _DEBUG
-        if (debug_print)
-        {
-            std::cout << "7. Call Draw to render the mesh.\n";
-            debug_print = false;
-        }
+        std::cout << "7. Drawing Mesh2D...\n";
+        printStatus();
+        #endif
 
-        #endif // DEBUG
 
-        glBindVertexArray(VAO);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // Adjust count as necessary
-        glBindVertexArray(0);
+        
+
+
+
+        glDrawElements(PrimitiveType, static_cast<GLsizei>(EBO.index_count), EBO.getIndexType(), 0);
+
+
+        printStatus();
     }
 };
+
 
 #endif
