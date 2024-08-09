@@ -1,14 +1,16 @@
 #pragma once
 #define SDL_MAIN_HANDLED
 
+
+
 #include <SDL.h>
 #include <GL/glew.h>
 #include <string>
 #include <cstdlib>
 #include <iostream>
-//#include "CommandLineParser.h"
 #ifndef APPLICATION_H
 #define APPLICATION_H
+
 template <class state_t>
 class Application
 {
@@ -64,17 +66,15 @@ private:
 
     std::string mTitle;
     state_t custom_state;
-    //std::shared_ptr<ASTNode> command_line_arguments;
 };
 
-// Implementation of the template functions
 
 
 template <class state_t>
 Application<state_t>::Application(int argc, char** argv) :
     sdlWindow(nullptr),
     glContext(nullptr),
-    mWidth(1000), // 1920
+    mWidth(1920), // 1920
     mHeight(1080),
     deltaTime(0.0),
     vsync_enabled(false),
@@ -86,7 +86,6 @@ Application<state_t>::Application(int argc, char** argv) :
     tick(nullptr)
 {
     std::vector<std::string> arguments (argv, argv + argc);
-    //command_line_arguments = parse_command_line(arguments);
 
 
 
@@ -95,7 +94,6 @@ Application<state_t>::Application(int argc, char** argv) :
     std::cout << "engineCore constructed\n";
     #endif
     #ifdef _DEBUG
-    //print_ast(command_line_arguments);
     #endif // DEBUG
     init_SDL();
 }
