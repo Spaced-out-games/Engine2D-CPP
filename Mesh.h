@@ -7,7 +7,7 @@
 
 #include "debug_utils.h"
 /**
-To use Mesh2D:
+To use Mesh:
 1. Set up SDL and OpenGL context.
 2. Create a shader either from a file or from source code. //
 3. Prepare your vertex data, which can involve loading from a file or creating in memory.
@@ -17,11 +17,11 @@ To draw:
 6. Set any required uniforms.
 7. Call draw() to render the mesh.
 */
-#ifndef MESH2D_H
-#define MESH2D_H
+#ifndef Mesh_H
+#define Mesh_H
 
 /**
- * Mesh2D handles 2D mesh rendering. Assumes each vertex has 2 components (for positions).
+ * Mesh handles 2D mesh rendering. Assumes each vertex has 2 components (for positions).
  */
 
 #pragma once
@@ -32,32 +32,32 @@ To draw:
 #include "eBuffer.h"
 
  /**
-  * Mesh2D handles 2D mesh rendering. Assumes each vertex has 2 components (for positions).
+  * Mesh handles 2D mesh rendering. Assumes each vertex has 2 components (for positions).
   */
 template <GLenum DrawingType, GLenum PrimitiveType>
-class Mesh2D {
+class Mesh {
 public:
     vArray VAO;  // Use VertexArray class to manage VAO
     vBuffer<GLfloat, 2, DrawingType> VBO; // Vertex size is fixed to 2 (x, y)
     eBuffer<GLuint, DrawingType, PrimitiveType> EBO;
 
-    Mesh2D() {}
+    Mesh() {}
 
-    Mesh2D(const GLfloat* vertices, size_t vertex_count, const GLuint* indices, size_t index_count)
+    Mesh(const GLfloat* vertices, size_t vertex_count, const GLuint* indices, size_t index_count)
         : VBO(), EBO() {
         init(vertices, vertex_count, indices, index_count);
         
 
     }
 
-    ~Mesh2D() {
+    ~Mesh() {
         // VertexArray destructor will handle VAO cleanup
     }
 
     void init(const GLfloat* vertices, size_t vertex_count, const GLuint* indices, size_t index_count) {
 
         #ifdef _DEBUG
-        std::cout << "4. Pass the vertex data and shader to the Mesh2D constructor. The geometry will be set up at this point\n";
+        std::cout << "4. Pass the vertex data and shader to the Mesh constructor. The geometry will be set up at this point\n";
         #endif
 
         VAO.init();
@@ -90,7 +90,7 @@ public:
     void draw() {
         printStatus();
         #ifdef _DEBUG
-        std::cout << "7. Drawing Mesh2D...\n";
+        std::cout << "7. Drawing Mesh...\n";
         printStatus();
         #endif
 
